@@ -108,11 +108,17 @@ signal prisoner_count_changed(count: int)
 # =============================================================================
 # PERSONEL
 # =============================================================================
-## Emitowany gdy nowy pracownik zostaje zatrudniony (staff_type dla prostego API)
-signal staff_hired(staff_type: int)
+## Emitowany gdy nowy pracownik zostaje zatrudniony
+signal staff_hired(staff_id: int, staff_type: int)
 
-## Emitowany gdy pracownik zostaje zwolniony (staff_type dla prostego API)
-signal staff_fired(staff_type: int)
+## Emitowany gdy pracownik zostaje zwolniony
+signal staff_fired(staff_id: int, staff_type: int)
+
+## Emitowany gdy zmienia się stan pracownika
+signal staff_state_changed(staff_id: int, old_state: int, new_state: int)
+
+## Emitowany gdy więzień zostaje spacyfikowany przez strażnika
+signal prisoner_pacified(prisoner_id: int, guard_id: int)
 
 ## Emitowany gdy pracownik zostaje ranny
 signal staff_injured(staff_id: int)

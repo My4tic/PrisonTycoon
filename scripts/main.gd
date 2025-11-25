@@ -11,6 +11,7 @@ const BuildModeControllerScript := preload("res://scripts/controllers/build_mode
 const EconomyPanelScene := preload("res://scenes/ui/economy_panel.tscn")
 const PrisonersPanelScene := preload("res://scenes/ui/prisoners_panel.tscn")
 const SchedulePanelScene := preload("res://scenes/ui/schedule_panel.tscn")
+const StaffPanelScene := preload("res://scenes/ui/staff_panel.tscn")
 
 # =============================================================================
 # REFERENCJE DO WĘZŁÓW
@@ -41,6 +42,9 @@ var prisoners_panel = null  # PrisonersPanel
 
 # Schedule Panel
 var schedule_panel = null  # SchedulePanel
+
+# Staff Panel
+var staff_panel = null  # StaffPanel
 
 # Top Bar
 @onready var day_label: Label = $UI/SafeArea/HUD/TopBar/MarginContainer/HBoxContainer/TimeContainer/DayLabel
@@ -93,11 +97,13 @@ func _ready() -> void:
 	_setup_economy_panel()
 	_setup_prisoners_panel()
 	_setup_schedule_panel()
+	_setup_staff_panel()
 
 	# Inicjalizuj managery
 	GridManager.initialize(tilemap)
 	NavigationManager.initialize(navigation_region)
 	PrisonerManager.set_container(prisoners_container)
+	StaffManager.set_container(staff_container)
 
 	# Rozpocznij nową grę (tymczasowo - docelowo z menu)
 	GameManager.start_new_game(Enums.GameMode.SANDBOX)
@@ -189,6 +195,11 @@ func _setup_prisoners_panel() -> void:
 func _setup_schedule_panel() -> void:
 	schedule_panel = SchedulePanelScene.instantiate()
 	panels_container.add_child(schedule_panel)
+
+
+func _setup_staff_panel() -> void:
+	staff_panel = StaffPanelScene.instantiate()
+	panels_container.add_child(staff_panel)
 
 
 func _handle_camera_input(event: InputEvent) -> void:
@@ -473,8 +484,8 @@ func _on_schedule_pressed() -> void:
 
 
 func _on_staff_pressed() -> void:
-	# TODO: Otwórz panel personelu
-	print("Staff panel pressed")
+	if staff_panel:
+		staff_panel.toggle_panel()
 
 
 func _on_stats_pressed() -> void:
