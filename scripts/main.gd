@@ -10,6 +10,7 @@ const BuildMenuScene := preload("res://scenes/ui/build_menu.tscn")
 const BuildModeControllerScript := preload("res://scripts/controllers/build_mode_controller.gd")
 const EconomyPanelScene := preload("res://scenes/ui/economy_panel.tscn")
 const PrisonersPanelScene := preload("res://scenes/ui/prisoners_panel.tscn")
+const SchedulePanelScene := preload("res://scenes/ui/schedule_panel.tscn")
 
 # =============================================================================
 # REFERENCJE DO WĘZŁÓW
@@ -37,6 +38,9 @@ var economy_panel = null  # EconomyPanel
 
 # Prisoners Panel
 var prisoners_panel = null  # PrisonersPanel
+
+# Schedule Panel
+var schedule_panel = null  # SchedulePanel
 
 # Top Bar
 @onready var day_label: Label = $UI/SafeArea/HUD/TopBar/MarginContainer/HBoxContainer/TimeContainer/DayLabel
@@ -88,6 +92,7 @@ func _ready() -> void:
 	_setup_build_mode()
 	_setup_economy_panel()
 	_setup_prisoners_panel()
+	_setup_schedule_panel()
 
 	# Inicjalizuj managery
 	GridManager.initialize(tilemap)
@@ -179,6 +184,11 @@ func _setup_economy_panel() -> void:
 func _setup_prisoners_panel() -> void:
 	prisoners_panel = PrisonersPanelScene.instantiate()
 	panels_container.add_child(prisoners_panel)
+
+
+func _setup_schedule_panel() -> void:
+	schedule_panel = SchedulePanelScene.instantiate()
+	panels_container.add_child(schedule_panel)
 
 
 func _handle_camera_input(event: InputEvent) -> void:
@@ -458,8 +468,8 @@ func _on_prisoners_pressed() -> void:
 
 
 func _on_schedule_pressed() -> void:
-	# TODO: Otwórz panel harmonogramu
-	print("Schedule panel pressed")
+	if schedule_panel:
+		schedule_panel.toggle_panel()
 
 
 func _on_staff_pressed() -> void:

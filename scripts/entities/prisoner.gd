@@ -488,17 +488,92 @@ func _on_schedule_activity_started(category: int, activity: int) -> void:
 	if category != security_category:
 		return
 
+	# Nie przerywaj aktualnych akcji jeśli więzień walczy lub ucieka
+	if current_state == Enums.PrisonerState.FIGHTING or current_state == Enums.PrisonerState.ESCAPING:
+		return
+
 	# Reaguj na zmianę harmonogramu
+	_follow_schedule_activity(activity as Enums.ScheduleActivity)
+
+
+func _follow_schedule_activity(activity: Enums.ScheduleActivity) -> void:
 	match activity:
 		Enums.ScheduleActivity.SLEEP:
 			if assigned_cell_id >= 0:
 				_navigate_to_building(assigned_cell_id)
 				change_state(Enums.PrisonerState.WALKING)
 		Enums.ScheduleActivity.EATING:
-			# TODO: Znajdź kantynę
-			pass
+			_navigate_to_activity_building(Enums.BuildingType.CANTEEN)
+		Enums.ScheduleActivity.HYGIENE:
+			_navigate_to_activity_building(Enums.BuildingType.SHOWER_ROOM)
+		Enums.ScheduleActivity.WORK:
+			if assigned_work_id >= 0:
+				_navigate_to_building(assigned_work_id)
+				change_state(Enums.PrisonerState.WALKING)
+			else:
+				_navigate_to_random_work_building()
+		Enums.ScheduleActivity.RECREATION:
+			_navigate_to_random_recreation_building()
+		Enums.ScheduleActivity.FREE_TIME:
+			# Wolny czas - zostań gdzie jesteś lub idź losowo
+			change_state(Enums.PrisonerState.IDLE)
 		Enums.ScheduleActivity.LOCKDOWN:
 			change_state(Enums.PrisonerState.LOCKDOWN)
+
+
+func _navigate_to_activity_building(building_type: Enums.BuildingType) -> void:
+	var buildings := BuildingManager.get_buildings_by_type(building_type)
+	if buildings.size() > 0:
+		# Wybierz losowy budynek tego typu
+		var building = buildings[randi() % buildings.size()]
+		_navigate_to_building(building.id)
+		change_state(Enums.PrisonerState.WALKING)
+	else:
+		# Brak budynku - zostań w miejscu
+		change_state(Enums.PrisonerState.IDLE)
+
+
+func _navigate_to_random_work_building() -> void:
+	var work_types: Array[Enums.BuildingType] = [
+		Enums.BuildingType.WORKSHOP_CARPENTRY,
+		Enums.BuildingType.LAUNDRY,
+		Enums.BuildingType.GARDEN,
+		Enums.BuildingType.CALL_CENTER
+	]
+
+	for work_type in work_types:
+		var buildings := BuildingManager.get_buildings_by_type(work_type)
+		if buildings.size() > 0:
+			var building = buildings[randi() % buildings.size()]
+			_navigate_to_building(building.id)
+			change_state(Enums.PrisonerState.WALKING)
+			return
+
+	# Brak warsztatów - idź na podwórko
+	_navigate_to_activity_building(Enums.BuildingType.YARD)
+
+
+func _navigate_to_random_recreation_building() -> void:
+	var rec_types: Array[Enums.BuildingType] = [
+		Enums.BuildingType.YARD,
+		Enums.BuildingType.GYM,
+		Enums.BuildingType.LIBRARY,
+		Enums.BuildingType.CHAPEL,
+		Enums.BuildingType.TV_ROOM
+	]
+
+	for rec_type in rec_types:
+		var buildings := BuildingManager.get_buildings_by_type(rec_type)
+		if buildings.size() > 0:
+			var building = buildings[randi() % buildings.size()]
+			_navigate_to_building(building.id)
+			change_state(Enums.PrisonerState.WALKING)
+			return
+
+	# Brak budynków rekreacyjnych - idź do celi
+	if assigned_cell_id >= 0:
+		_navigate_to_building(assigned_cell_id)
+		change_state(Enums.PrisonerState.WALKING)
 
 
 func _on_lockdown_started(_reason: String) -> void:
