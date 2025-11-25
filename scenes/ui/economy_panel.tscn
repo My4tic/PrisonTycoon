@@ -1,0 +1,160 @@
+[gd_scene load_steps=2 format=3 uid="uid://economy_panel"]
+
+[ext_resource type="Script" path="res://scripts/ui/economy_panel.gd" id="1_script"]
+
+[node name="EconomyPanel" type="PanelContainer"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -250.0
+offset_top = -280.0
+offset_right = 250.0
+offset_bottom = 280.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_script")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="TitleLabel" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "💰 Finanse"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="Header" type="VBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="CapitalLabel" type="Label" parent="VBoxContainer/Header"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "Kapitał: $30,000"
+horizontal_alignment = 1
+
+[node name="BalanceLabel" type="Label" parent="VBoxContainer/Header"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Bilans dzienny: +$0"
+horizontal_alignment = 1
+
+[node name="TrendLabel" type="Label" parent="VBoxContainer/Header"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "➡️ Stabilny"
+horizontal_alignment = 1
+
+[node name="HSeparator2" type="HSeparator" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="RevenueSection" type="VBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="RevenueTotalLabel" type="Label" parent="VBoxContainer/RevenueSection"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0.3, 0.9, 0.3, 1)
+text = "📈 Przychody: $0/dzień"
+
+[node name="Details" type="VBoxContainer" parent="VBoxContainer/RevenueSection"]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="SubsidiesLabel" type="Label" parent="VBoxContainer/RevenueSection/Details"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "  Subwencje: $0"
+
+[node name="WorkshopLabel" type="Label" parent="VBoxContainer/RevenueSection/Details"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "  Warsztaty: $0"
+
+[node name="ContractsLabel" type="Label" parent="VBoxContainer/RevenueSection/Details"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "  Kontrakty: $0"
+
+[node name="BonusesLabel" type="Label" parent="VBoxContainer/RevenueSection/Details"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "  Bonusy: $0"
+
+[node name="HSeparator3" type="HSeparator" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="ExpensesSection" type="VBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="ExpensesTotalLabel" type="Label" parent="VBoxContainer/ExpensesSection"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0.9, 0.3, 0.3, 1)
+text = "📉 Wydatki: $0/dzień"
+
+[node name="Details" type="VBoxContainer" parent="VBoxContainer/ExpensesSection"]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="SalariesLabel" type="Label" parent="VBoxContainer/ExpensesSection/Details"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "  Pensje: $0"
+
+[node name="FoodLabel" type="Label" parent="VBoxContainer/ExpensesSection/Details"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "  Jedzenie: $0"
+
+[node name="UtilitiesLabel" type="Label" parent="VBoxContainer/ExpensesSection/Details"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "  Media: $0"
+
+[node name="ConstructionLabel" type="Label" parent="VBoxContainer/ExpensesSection/Details"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "  Budowa: $0"
+
+[node name="LoanLabel" type="Label" parent="VBoxContainer/ExpensesSection/Details"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "  Odsetki: $0"
+
+[node name="HSeparator4" type="HSeparator" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="LoanSection" type="VBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="LoanStatusLabel" type="Label" parent="VBoxContainer/LoanSection"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Brak aktywnej pożyczki"
+horizontal_alignment = 1
+
+[node name="LoanButton" type="Button" parent="VBoxContainer/LoanSection"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Weź pożyczkę awaryjną ($20,000)"
+
+[node name="RepayButton" type="Button" parent="VBoxContainer/LoanSection"]
+visible = false
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Spłać $1,000"
+
+[node name="CloseButton" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Zamknij"

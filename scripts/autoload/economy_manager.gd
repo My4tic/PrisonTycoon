@@ -6,12 +6,33 @@
 ## - Tracking przychodów i wydatków
 ## - Obliczanie dziennego bilansu
 ## - Obsługa bankructwa i pożyczek
+## - Automatyczne naliczanie co godzinę in-game
 extends Node
 
 # =============================================================================
 # ZMIENNE
 # =============================================================================
 var capital: int = Constants.STARTING_CAPITAL
+
+# Liczniki dla symulacji (tymczasowe, dopóki nie ma PrisonerManager/StaffManager)
+var prisoner_count: int = 0
+var prisoners_by_category: Dictionary = {
+	Enums.SecurityCategory.LOW: 0,
+	Enums.SecurityCategory.MEDIUM: 0,
+	Enums.SecurityCategory.HIGH: 0,
+	Enums.SecurityCategory.MAXIMUM: 0
+}
+var staff_counts: Dictionary = {
+	Enums.StaffType.GUARD: 0,
+	Enums.StaffType.COOK: 0,
+	Enums.StaffType.MEDIC: 0,
+	Enums.StaffType.PSYCHOLOGIST: 0,
+	Enums.StaffType.JANITOR: 0,
+	Enums.StaffType.PRIEST: 0
+}
+
+# Flaga lockdownu (tray service = droższe jedzenie)
+var is_lockdown: bool = false
 
 # Śledzenie przychodów (dzienny)
 var daily_revenue: Dictionary = {
@@ -276,11 +297,151 @@ func _on_day_changed(_day: int) -> void:
 
 
 func _on_hour_changed(hour: int) -> void:
-	# Odsetki od pożyczki naliczane co godzinę (równomiernie przez dzień)
+	# Odsetki od pożyczki naliczane o północy
 	if has_loan and hour == 0:
 		var interest := get_loan_daily_interest()
 		if interest > 0:
 			subtract_capital(interest, "loan_interest")
+
+	# Naliczaj przychody i wydatki co godzinę (1/24 dziennego)
+	_process_hourly_economy()
+
+
+func _process_hourly_economy() -> void:
+	# Subwencje za więźniów (naliczane co godzinę, 1/24 dziennej kwoty)
+	var hourly_subsidies := calculate_daily_subsidies(prisoners_by_category) / 24
+	if hourly_subsidies > 0:
+		add_capital(hourly_subsidies, "subsidies")
+
+	# Przychód z warsztatów (TODO: integracja z WorkshopManager gdy będzie)
+	var hourly_workshop := _calculate_workshop_income() / 24
+	if hourly_workshop > 0:
+		add_capital(hourly_workshop, "workshop")
+
+	# Wydatki - pensje (1/24 dziennej kwoty)
+	var hourly_salaries := calculate_daily_salaries(staff_counts) / 24
+	if hourly_salaries > 0:
+		subtract_capital(hourly_salaries, "salaries")
+
+	# Wydatki - jedzenie
+	var hourly_food := calculate_daily_food(prisoner_count, is_lockdown) / 24
+	if hourly_food > 0:
+		subtract_capital(hourly_food, "food")
+
+	# Wydatki - media
+	var building_count := BuildingManager.count_buildings()
+	var hourly_utilities := calculate_daily_utilities(building_count) / 24
+	if hourly_utilities > 0:
+		subtract_capital(hourly_utilities, "utilities")
+
+
+func _calculate_workshop_income() -> int:
+	# TODO: Prawdziwa kalkulacja gdy będzie WorkshopManager
+	# Na razie zakładamy $50/dzień za każdy warsztat z przypisanymi więźniami
+	var workshops := BuildingManager.get_buildings_by_type(Enums.BuildingType.WORKSHOP_CARPENTRY)
+	var income: int = 0
+	for workshop in workshops:
+		if workshop.current_occupancy > 0:
+			income += workshop.current_occupancy * 50
+	return income
+
+
+# =============================================================================
+# ZARZĄDZANIE WIĘŹNIAMI (tymczasowe API)
+# =============================================================================
+func add_prisoner(category: Enums.SecurityCategory) -> void:
+	prisoner_count += 1
+	prisoners_by_category[category] += 1
+	Signals.prisoner_count_changed.emit(prisoner_count)
+
+
+func remove_prisoner(category: Enums.SecurityCategory) -> void:
+	if prisoner_count > 0:
+		prisoner_count -= 1
+	if prisoners_by_category[category] > 0:
+		prisoners_by_category[category] -= 1
+	Signals.prisoner_count_changed.emit(prisoner_count)
+
+
+func get_prisoner_count() -> int:
+	return prisoner_count
+
+
+# =============================================================================
+# ZARZĄDZANIE PERSONELEM (tymczasowe API)
+# =============================================================================
+func hire_staff(staff_type: Enums.StaffType) -> bool:
+	var salary := _get_staff_salary(staff_type)
+	# Sprawdź czy stać na pierwszą pensję
+	if not can_afford(salary):
+		Signals.alert_triggered.emit(
+			Enums.AlertPriority.IMPORTANT,
+			"Brak środków",
+			"Nie stać cię na zatrudnienie tego pracownika",
+			Vector2i.ZERO
+		)
+		return false
+
+	staff_counts[staff_type] += 1
+	Signals.staff_hired.emit(staff_type)
+	return true
+
+
+func fire_staff(staff_type: Enums.StaffType) -> bool:
+	if staff_counts[staff_type] <= 0:
+		return false
+
+	staff_counts[staff_type] -= 1
+	Signals.staff_fired.emit(staff_type)
+	return true
+
+
+func get_staff_count(staff_type: Enums.StaffType) -> int:
+	return staff_counts.get(staff_type, 0)
+
+
+func get_total_staff_count() -> int:
+	var total: int = 0
+	for count in staff_counts.values():
+		total += count
+	return total
+
+
+func _get_staff_salary(staff_type: Enums.StaffType) -> int:
+	match staff_type:
+		Enums.StaffType.GUARD:
+			return Constants.SALARY_GUARD
+		Enums.StaffType.COOK:
+			return Constants.SALARY_COOK
+		Enums.StaffType.MEDIC:
+			return Constants.SALARY_MEDIC
+		Enums.StaffType.PSYCHOLOGIST:
+			return Constants.SALARY_PSYCHOLOGIST
+		Enums.StaffType.JANITOR:
+			return Constants.SALARY_JANITOR
+		Enums.StaffType.PRIEST:
+			return Constants.SALARY_PRIEST
+		_:
+			return 100
+
+
+# =============================================================================
+# PREDYKCJA
+# =============================================================================
+func get_predicted_daily_balance() -> int:
+	var revenue := calculate_daily_subsidies(prisoners_by_category) + _calculate_workshop_income()
+	var expenses := calculate_daily_salaries(staff_counts) + \
+		calculate_daily_food(prisoner_count, is_lockdown) + \
+		calculate_daily_utilities(BuildingManager.count_buildings())
+
+	if has_loan:
+		expenses += get_loan_daily_interest()
+
+	return revenue - expenses
+
+
+func get_monthly_staff_cost() -> int:
+	return calculate_daily_salaries(staff_counts) * Constants.DAYS_PER_MONTH
 
 
 # =============================================================================

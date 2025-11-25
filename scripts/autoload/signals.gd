@@ -102,14 +102,17 @@ signal prisoner_assigned_work(prisoner_id: int, workplace_id: int)
 ## Emitowany gdy więzień zostaje wysłany do izolatki
 signal prisoner_sent_to_solitary(prisoner_id: int, days: int)
 
+## Emitowany gdy zmienia się liczba więźniów
+signal prisoner_count_changed(count: int)
+
 # =============================================================================
 # PERSONEL
 # =============================================================================
-## Emitowany gdy nowy pracownik zostaje zatrudniony
-signal staff_hired(staff_id: int, staff_type: int)
+## Emitowany gdy nowy pracownik zostaje zatrudniony (staff_type dla prostego API)
+signal staff_hired(staff_type: int)
 
-## Emitowany gdy pracownik zostaje zwolniony
-signal staff_fired(staff_id: int)
+## Emitowany gdy pracownik zostaje zwolniony (staff_type dla prostego API)
+signal staff_fired(staff_type: int)
 
 ## Emitowany gdy pracownik zostaje ranny
 signal staff_injured(staff_id: int)

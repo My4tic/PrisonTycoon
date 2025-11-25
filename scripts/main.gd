@@ -8,6 +8,7 @@ extends Node2D
 const BuildGhostScene := preload("res://scenes/buildings/build_ghost.tscn")
 const BuildMenuScene := preload("res://scenes/ui/build_menu.tscn")
 const BuildModeControllerScript := preload("res://scripts/controllers/build_mode_controller.gd")
+const EconomyPanelScene := preload("res://scenes/ui/economy_panel.tscn")
 
 # =============================================================================
 # REFERENCJE DO WĘZŁÓW
@@ -29,6 +30,9 @@ const BuildModeControllerScript := preload("res://scripts/controllers/build_mode
 var build_mode_controller = null  # BuildModeController
 var build_ghost = null  # BuildGhost
 var build_menu = null  # BuildMenu
+
+# Economy Panel
+var economy_panel = null  # EconomyPanel
 
 # Top Bar
 @onready var day_label: Label = $UI/SafeArea/HUD/TopBar/MarginContainer/HBoxContainer/TimeContainer/DayLabel
@@ -78,6 +82,7 @@ func _ready() -> void:
 	_connect_buttons()
 	_setup_camera()
 	_setup_build_mode()
+	_setup_economy_panel()
 
 	# Inicjalizuj managery
 	GridManager.initialize(tilemap)
@@ -154,6 +159,11 @@ func _setup_build_mode() -> void:
 	build_mode_controller.set_script(BuildModeControllerScript)
 	add_child(build_mode_controller)
 	build_mode_controller.initialize(build_ghost, build_menu, buildings_container, camera)
+
+
+func _setup_economy_panel() -> void:
+	economy_panel = EconomyPanelScene.instantiate()
+	panels_container.add_child(economy_panel)
 
 
 func _handle_camera_input(event: InputEvent) -> void:
@@ -440,8 +450,9 @@ func _on_staff_pressed() -> void:
 
 
 func _on_stats_pressed() -> void:
-	# TODO: Otwórz panel statystyk
-	print("Stats panel pressed")
+	# Otwórz panel ekonomii (statystyki finansowe)
+	if economy_panel:
+		economy_panel.toggle_panel()
 
 
 func _on_alerts_pressed() -> void:
