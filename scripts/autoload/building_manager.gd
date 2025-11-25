@@ -221,7 +221,7 @@ func can_build(building_type: Enums.BuildingType, grid_position: Vector2i) -> bo
 	if not EconomyManager.can_afford(cost):
 		return false
 
-	# Sprawdź czy wszystkie komórki są wolne
+	# Sprawdź czy wszystkie komórki są wolne i mają teren
 	for x in range(size.x):
 		for y in range(size.y):
 			var cell := Vector2i(grid_position.x + x, grid_position.y + y)
@@ -232,6 +232,11 @@ func can_build(building_type: Enums.BuildingType, grid_position: Vector2i) -> bo
 			if cell.x < 0 or cell.x >= Constants.GRID_WIDTH:
 				return false
 			if cell.y < 0 or cell.y >= Constants.GRID_HEIGHT:
+				return false
+
+			# Sprawdź czy jest teren na tej komórce
+			var terrain := GridManager.get_terrain(cell)
+			if terrain == Vector2i(-1, -1):
 				return false
 
 	return true
@@ -251,6 +256,10 @@ func get_placement_error(building_type: Enums.BuildingType, grid_position: Vecto
 				return "Poza granicami mapy"
 			if is_cell_occupied(cell):
 				return "Teren zajęty"
+			# Sprawdź czy jest teren
+			var terrain := GridManager.get_terrain(cell)
+			if terrain == Vector2i(-1, -1):
+				return "Brak terenu"
 
 	return ""
 

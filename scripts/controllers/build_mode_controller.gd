@@ -23,6 +23,9 @@ var camera: Camera2D = null
 # Sceny
 var _building_scene: PackedScene = null
 
+# Debug
+var _debug_shown: bool = false
+
 
 # =============================================================================
 # INICJALIZACJA
@@ -30,6 +33,43 @@ var _building_scene: PackedScene = null
 func _ready() -> void:
 	_building_scene = preload("res://scenes/buildings/building.tscn")
 	_connect_signals()
+
+
+# Przechwytuj input bezpośrednio (nie przez _unhandled_input)
+func _input(event: InputEvent) -> void:
+	if not is_active:
+		return
+
+	# Obsługa kliknięcia myszy - musi być tu bo _unhandled_input nie dostaje kliknięć
+	if event is InputEventMouseButton:
+		var mouse_event := event as InputEventMouseButton
+
+		# Ignoruj kliknięcia na UI (menu budowania)
+		if _is_click_on_ui(mouse_event.position):
+			return
+
+		if mouse_event.button_index == MOUSE_BUTTON_LEFT and mouse_event.pressed:
+			_try_place_building(mouse_event.position)
+			get_viewport().set_input_as_handled()
+		elif mouse_event.button_index == MOUSE_BUTTON_RIGHT and mouse_event.pressed:
+			exit_build_mode()
+			get_viewport().set_input_as_handled()
+
+
+func _is_click_on_ui(screen_pos: Vector2) -> bool:
+	# Sprawdź czy kliknięcie jest na widocznym menu budowania
+	if build_menu and build_menu.visible:
+		var menu_rect: Rect2 = build_menu.get_global_rect()
+		if menu_rect.has_point(screen_pos):
+			return true
+
+	# Sprawdź czy kliknięcie jest na górnym lub dolnym pasku (poza obszarem gry)
+	# TopBar: 0-72px, BottomBar: od dołu 96px
+	var viewport_size: Vector2 = get_viewport().get_visible_rect().size
+	if screen_pos.y < 80 or screen_pos.y > viewport_size.y - 110:
+		return true
+
+	return false
 
 
 func _connect_signals() -> void:
@@ -54,6 +94,7 @@ func initialize(ghost, menu, container: Node2D, cam: Camera2D) -> void:
 func enter_build_mode(building_type: Enums.BuildingType = Enums.BuildingType.CELL_SINGLE) -> void:
 	is_active = true
 	selected_building_type = building_type
+	_debug_shown = false
 
 	if build_ghost:
 		build_ghost.set_building_type(building_type)
@@ -100,21 +141,11 @@ func handle_input(event: InputEvent) -> bool:
 	if not is_active:
 		return false
 
-	# Obsługa ruchu myszy
+	# Obsługa ruchu myszy (kliknięcia obsługiwane w _input)
 	if event is InputEventMouseMotion:
 		var mouse_motion := event as InputEventMouseMotion
 		_update_ghost_position(mouse_motion.position)
 		return true
-
-	# Obsługa kliknięcia myszy
-	if event is InputEventMouseButton:
-		var mouse_event := event as InputEventMouseButton
-		if mouse_event.button_index == MOUSE_BUTTON_LEFT and mouse_event.pressed:
-			_try_place_building(mouse_event.position)
-			return true
-		elif mouse_event.button_index == MOUSE_BUTTON_RIGHT and mouse_event.pressed:
-			exit_build_mode()
-			return true
 
 	# Obsługa dotyku (touch)
 	if event is InputEventScreenTouch:
@@ -172,14 +203,11 @@ func _screen_to_world(screen_pos: Vector2) -> Vector2:
 
 func _try_place_building(screen_pos: Vector2) -> void:
 	if not build_ghost:
-		print("DEBUG: build_ghost is null")
 		return
 
-	# Aktualizuj pozycję ghost na wszelki wypadek
+	# Aktualizuj pozycję ghost
 	var world_pos: Vector2 = _screen_to_world(screen_pos)
 	build_ghost.update_position(world_pos)
-
-	print("DEBUG: Próba umieszczenia na pozycji grid: ", build_ghost.grid_position, " valid: ", build_ghost.is_valid)
 
 	# Próbuj umieścić budynek
 	if build_ghost.try_place():
@@ -187,15 +215,12 @@ func _try_place_building(screen_pos: Vector2) -> void:
 		var building_id = -1
 		if BuildingManager.buildings.size() > 0:
 			building_id = BuildingManager.buildings.keys().max()
-		print("DEBUG: Budynek umieszczony, ID: ", building_id)
 		_spawn_building_visual(
 			building_id,
 			selected_building_type,
 			build_ghost.grid_position,
 			build_ghost.grid_size
 		)
-	else:
-		print("DEBUG: Nie można umieścić - ", build_ghost.get_placement_error())
 
 
 func _spawn_building_visual(building_id: int, building_type: Enums.BuildingType, grid_pos: Vector2i, grid_size: Vector2i) -> void:
@@ -216,8 +241,6 @@ func _on_menu_building_selected(building_type: Enums.BuildingType) -> void:
 	# Ukryj menu żeby można było umieścić budynek
 	if build_menu:
 		build_menu.hide_menu()
-	# Pokaż instrukcję
-	print("Kliknij na mapie aby umieścić budynek. Prawy przycisk/ESC aby anulować.")
 
 
 func _on_menu_closed() -> void:

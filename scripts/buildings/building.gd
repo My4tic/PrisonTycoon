@@ -38,6 +38,7 @@ const CATEGORY_COLORS: Dictionary = {
 # =============================================================================
 func _ready() -> void:
 	add_to_group("buildings")
+	z_index = 10  # Renderuj ponad terenem
 	_update_visual()
 
 

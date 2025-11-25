@@ -25,6 +25,7 @@ const COLOR_INVALID := Color(0.8, 0.3, 0.3, 0.5)   # Czerwony - nie można
 # =============================================================================
 func _ready() -> void:
 	visible = false
+	z_index = 100  # Renderuj ponad terenem i budynkami
 	_update_visual()
 
 

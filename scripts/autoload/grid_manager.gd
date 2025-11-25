@@ -181,14 +181,23 @@ func _ensure_layers() -> void:
 func _setup_initial_terrain() -> void:
 	if tilemap == null:
 		return
-	# Wypełnij całą mapę trawą jako bazowy teren
-	# Używamy małego obszaru startowego dla wydajności
-	var start_size: int = 30  # 30x30 tiles na start
-	var start_x: int = (Constants.GRID_WIDTH - start_size) / 2
-	var start_y: int = (Constants.GRID_HEIGHT - start_size) / 2
 
-	for x in range(start_size):
-		for y in range(start_size):
+	# Oblicz widoczny obszar na podstawie viewportu i kamery
+	# Viewport: 1920x1080, Tile: 64px
+	# Widoczne: ~30 tiles szerokości, ~17 tiles wysokości
+	# Dodajemy margines i centrujemy na środku mapy (50, 50)
+
+	var visible_tiles_x: int = ceili(1920.0 / Constants.TILE_SIZE) + 4  # ~34 tiles
+	var visible_tiles_y: int = ceili(1080.0 / Constants.TILE_SIZE) + 4  # ~21 tiles
+
+	var center_x: int = Constants.GRID_WIDTH / 2  # 50
+	var center_y: int = Constants.GRID_HEIGHT / 2  # 50
+
+	var start_x: int = center_x - visible_tiles_x / 2
+	var start_y: int = center_y - visible_tiles_y / 2
+
+	for x in range(visible_tiles_x):
+		for y in range(visible_tiles_y):
 			set_terrain(Vector2i(start_x + x, start_y + y), TERRAIN_GRASS)
 
 
@@ -416,12 +425,11 @@ func unlock_all_doors() -> void:
 # KONWERSJA WSPÓŁRZĘDNYCH
 # =============================================================================
 func world_to_grid(world_pos: Vector2) -> Vector2i:
-	if tilemap == null:
-		return Vector2i(
-			floori(world_pos.x / Constants.TILE_SIZE),
-			floori(world_pos.y / Constants.TILE_SIZE)
-		)
-	return tilemap.local_to_map(world_pos)
+	# Zawsze używaj ręcznego przeliczenia - tilemap.local_to_map może dawać błędne wyniki
+	return Vector2i(
+		floori(world_pos.x / Constants.TILE_SIZE),
+		floori(world_pos.y / Constants.TILE_SIZE)
+	)
 
 
 func grid_to_world(grid_pos: Vector2i) -> Vector2:
