@@ -51,10 +51,10 @@ Prison Tycoon to mobilna gra symulacyjna typu management sim, gdzie gracz buduje
 - [x] Funkcje pomocnicze: is_cell_occupied(), get_cells_in_rect() - w BuildingManager
 
 ### 1.3 Podstawowy system nawigacji ✅
-- [x] NavigationRegion2D dla całego więzienia - NavigationManager
-- [x] Dynamiczne aktualizowanie po budowie - mark_dirty() + debounced rebuild
-- [x] Pathfinding A* dla ruchu więźniów i personelu - get_path(), is_point_reachable()
-- [x] Obsługa przeszkód i drzwi - walkable cache w GridManager
+- [x] NavigationRegion2D dla całego więzienia - NavigationManager (uproszczony)
+- [x] Pathfinding A* - find_path(), is_point_reachable() via NavigationServer2D
+- [x] Obsługa przeszkód - walkable cache w GridManager
+- [ ] TODO: Rozbudować nawigację gdy pojawią się więźniowie (Faza 4)
 
 ### 1.4 Kamera i sterowanie mobile ✅
 - [x] Camera2D z limitami obszaru
@@ -71,14 +71,14 @@ Prison Tycoon to mobilna gra symulacyjna typu management sim, gdzie gracz buduje
 
 ---
 
-## FAZA 2: SYSTEM BUDOWANIA
+## FAZA 2: SYSTEM BUDOWANIA 🔄 NASTĘPNA
 **Czas: 2-3 tygodnie | Priorytet: KRYTYCZNY**
 
-### 2.1 BuildingManager (Singleton)
-- Katalog wszystkich typów budynków (loaded from JSON)
-- Funkcje: can_build(), place_building(), remove_building()
-- Walidacja: kolizje, budżet, wymagania techniczne
-- Integracja z EconomyManager dla kosztów
+### 2.1 BuildingManager (Singleton) - częściowo gotowy
+- [x] Katalog wszystkich typów budynków (loaded from JSON) - buildings.json
+- [ ] Funkcje: can_build(), place_building(), remove_building()
+- [ ] Walidacja: kolizje, budżet, wymagania techniczne
+- [ ] Integracja z EconomyManager dla kosztów
 
 ### 2.2 Building Base Class
 - Area2D jako bazowa klasa
