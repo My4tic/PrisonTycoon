@@ -42,13 +42,13 @@ func _populate_chapters() -> void:
 		child.queue_free()
 
 	# Stwórz przycisk dla każdego rozdziału
-	var chapters := CampaignManager.get_all_chapters()
+	var chapters: Array = CampaignManager.get_all_chapters()
 	for chapter in chapters:
 		var chapter_button := _create_chapter_button(chapter)
 		chapters_container.add_child(chapter_button)
 
 
-func _create_chapter_button(chapter: CampaignManager.Chapter) -> Button:
+func _create_chapter_button(chapter) -> Button:
 	var button := Button.new()
 	button.custom_minimum_size = Vector2(0, 80)
 	button.size_flags_horizontal = Control.SIZE_EXPAND_FILL

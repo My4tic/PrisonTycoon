@@ -34,9 +34,10 @@ func _on_tutorial_message(message_id: String) -> void:
 	_current_message_id = message_id
 
 	# Pobierz aktualny krok tutoriala
-	if CampaignManager.current_chapter and CampaignManager.tutorial_active:
-		var step_index := CampaignManager.current_tutorial_step
-		var steps: Array = CampaignManager.current_chapter.tutorial_steps
+	var current_chapter = CampaignManager.current_chapter
+	if current_chapter and CampaignManager.tutorial_active:
+		var step_index: int = CampaignManager.current_tutorial_step
+		var steps: Array = current_chapter.tutorial_steps
 
 		if step_index < steps.size():
 			var step: Dictionary = steps[step_index]

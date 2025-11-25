@@ -586,7 +586,7 @@ func _on_building_placed(_building_type: int, _position: Vector2i, _size: Vector
 
 	# Sprawdź tutorial
 	if tutorial_active and current_chapter:
-		var step := current_chapter.tutorial_steps[current_tutorial_step] if current_tutorial_step < current_chapter.tutorial_steps.size() else {}
+		var step: Dictionary = current_chapter.tutorial_steps[current_tutorial_step] if current_tutorial_step < current_chapter.tutorial_steps.size() else {}
 		var trigger: String = step.get("trigger", "")
 		if trigger == "build_" + str(_building_type):
 			advance_tutorial()

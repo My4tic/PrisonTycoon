@@ -6,10 +6,10 @@ extends PanelContainer
 # =============================================================================
 # REFERENCJE DO WĘZŁÓW
 # =============================================================================
-@onready var title_label: Label = $VBoxContainer/TitleLabel
+@onready var title_label: Label = $VBoxContainer/TitleContainer/TitleLabel
 @onready var chapter_label: Label = $VBoxContainer/ChapterLabel
 @onready var objectives_container: VBoxContainer = $VBoxContainer/ObjectivesContainer
-@onready var collapse_button: Button = $VBoxContainer/CollapseButton
+@onready var collapse_button: Button = $VBoxContainer/TitleContainer/CollapseButton
 
 var _collapsed: bool = false
 var _objective_labels: Dictionary = {}  # objective_id -> Label
@@ -44,9 +44,9 @@ func _update_display() -> void:
 		return
 
 	visible = true
-	var chapter := CampaignManager.current_chapter
+	var chapter = CampaignManager.current_chapter
 
-	if chapter_label:
+	if chapter_label and chapter:
 		chapter_label.text = "Rozdział %d: %s" % [chapter.id + 1, chapter.title]
 
 	_update_objectives()
@@ -59,7 +59,7 @@ func _update_objectives() -> void:
 	_objective_labels.clear()
 
 	# Dodaj aktualne cele
-	var objectives := CampaignManager.get_active_objectives()
+	var objectives: Array = CampaignManager.get_active_objectives()
 	for obj in objectives:
 		if obj.is_hidden and not obj.is_completed:
 			continue
@@ -68,7 +68,7 @@ func _update_objectives() -> void:
 		objectives_container.add_child(obj_container)
 
 
-func _create_objective_item(obj: CampaignManager.Objective) -> HBoxContainer:
+func _create_objective_item(obj) -> HBoxContainer:
 	var container := HBoxContainer.new()
 	container.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 
@@ -104,7 +104,7 @@ func _create_objective_item(obj: CampaignManager.Objective) -> HBoxContainer:
 
 
 func _update_objective_label(objective_id: int) -> void:
-	var objectives := CampaignManager.get_active_objectives()
+	var objectives: Array = CampaignManager.get_active_objectives()
 	for obj in objectives:
 		if obj.id == objective_id:
 			if objective_id in _objective_labels:
@@ -167,7 +167,7 @@ func _on_collapse_pressed() -> void:
 # POMOCNICZE
 # =============================================================================
 func _get_objective_description(objective_id: int) -> String:
-	var objectives := CampaignManager.get_active_objectives()
+	var objectives: Array = CampaignManager.get_active_objectives()
 	for obj in objectives:
 		if obj.id == objective_id:
 			return obj.description
