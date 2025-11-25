@@ -1,6 +1,7 @@
-[gd_scene load_steps=3 format=3 uid="uid://prisoner_scene"]
+[gd_scene load_steps=4 format=3 uid="uid://prisoner_scene"]
 
 [ext_resource type="Script" path="res://scripts/entities/prisoner.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/sprites/characters/prisoner.png" id="2_texture"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_collision"]
 radius = 14.0
@@ -13,12 +14,8 @@ script = ExtResource("1_script")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_collision")
 
-[node name="ColorRect" type="ColorRect" parent="."]
-offset_left = -16.0
-offset_top = -16.0
-offset_right = 16.0
-offset_bottom = 16.0
-color = Color(0.3, 0.5, 0.9, 1)
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_texture")
 
 [node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
 path_desired_distance = 8.0

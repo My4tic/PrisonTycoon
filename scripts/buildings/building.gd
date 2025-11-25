@@ -18,11 +18,19 @@ var is_constructed: bool = false
 var current_occupancy: int = 0
 
 # Referencje do węzłów
-@onready var sprite: ColorRect = $Sprite
+@onready var sprite: Sprite2D = $Sprite
+@onready var color_fallback: ColorRect = $ColorFallback
 @onready var collision: CollisionShape2D = $CollisionShape2D
 @onready var label: Label = $Label
 
-# Kolory dla kategorii budynków
+# Mapowanie typów budynków na nazwy plików sprite'ów
+const SPRITE_FILES: Dictionary = {
+	Enums.BuildingType.CELL_SINGLE: "single_cell.png",
+	Enums.BuildingType.CELL_DOUBLE: "double_cell.png",
+	Enums.BuildingType.KITCHEN: "kitchen.png",
+}
+
+# Kolory dla kategorii budynków (fallback gdy brak sprite'a)
 const CATEGORY_COLORS: Dictionary = {
 	"CELLS": Color(0.4, 0.6, 0.8, 0.8),        # Niebieski
 	"FOOD": Color(0.8, 0.6, 0.4, 0.8),         # Pomarańczowy
@@ -65,11 +73,24 @@ func _update_visual() -> void:
 	var info: Dictionary = BuildingManager.get_building_info(building_type)
 	var pixel_size := Vector2(grid_size.x * Constants.TILE_SIZE, grid_size.y * Constants.TILE_SIZE)
 
-	# Aktualizuj sprite (ColorRect jako placeholder)
-	if sprite:
-		sprite.size = pixel_size
-		var category: String = info.get("category", "INFRASTRUCTURE")
-		sprite.color = CATEGORY_COLORS.get(category, Color(0.5, 0.5, 0.5, 0.8))
+	# Próbuj załadować sprite
+	var has_sprite := _load_sprite()
+
+	if has_sprite and sprite:
+		sprite.visible = true
+		color_fallback.visible = false
+		# Skaluj sprite do rozmiaru budynku
+		var texture_size := sprite.texture.get_size()
+		sprite.scale = pixel_size / texture_size
+	else:
+		# Fallback na ColorRect
+		if sprite:
+			sprite.visible = false
+		if color_fallback:
+			color_fallback.visible = true
+			color_fallback.size = pixel_size
+			var category: String = info.get("category", "INFRASTRUCTURE")
+			color_fallback.color = CATEGORY_COLORS.get(category, Color(0.5, 0.5, 0.5, 0.8))
 
 	# Aktualizuj collision shape
 	if collision:
@@ -85,19 +106,37 @@ func _update_visual() -> void:
 		label.position = Vector2.ZERO
 
 
+func _load_sprite() -> bool:
+	if not sprite:
+		return false
+
+	# Sprawdź czy mamy sprite dla tego typu budynku
+	if building_type in SPRITE_FILES:
+		var sprite_path: String = "res://assets/sprites/buildings/" + str(SPRITE_FILES[building_type])
+		var texture: Texture2D = load(sprite_path)
+		if texture:
+			sprite.texture = texture
+			return true
+
+	return false
+
+
 func set_constructed(constructed: bool) -> void:
 	is_constructed = constructed
-	if sprite:
-		# Budynek w budowie jest bardziej przezroczysty
-		sprite.color.a = 0.8 if constructed else 0.4
+	if sprite and sprite.visible:
+		sprite.modulate.a = 1.0 if constructed else 0.5
+	elif color_fallback:
+		color_fallback.color.a = 0.8 if constructed else 0.4
 
 
 func set_highlighted(highlighted: bool) -> void:
-	if sprite:
+	if sprite and sprite.visible:
+		sprite.modulate.a = 1.0 if highlighted else (1.0 if is_constructed else 0.5)
+	elif color_fallback:
 		if highlighted:
-			sprite.color.a = 1.0
+			color_fallback.color.a = 1.0
 		else:
-			sprite.color.a = 0.8 if is_constructed else 0.4
+			color_fallback.color.a = 0.8 if is_constructed else 0.4
 
 
 # =============================================================================

@@ -42,18 +42,26 @@ var move_speed: float = 120.0  # pikseli/sekundę
 # =============================================================================
 # WIZUALIZACJA
 # =============================================================================
-@onready var color_rect: ColorRect = $ColorRect  # Placeholder
+@onready var sprite: Sprite2D = $Sprite2D
 
-# Kolory dla typów personelu
+# Mapowanie typów personelu na pliki sprite'ów
+const STAFF_SPRITES: Dictionary = {
+	Enums.StaffType.GUARD: "res://assets/sprites/characters/guard.png",
+	Enums.StaffType.COOK: "res://assets/sprites/characters/cook.png",
+	Enums.StaffType.MEDIC: "res://assets/sprites/characters/medic.png",
+	Enums.StaffType.JANITOR: "res://assets/sprites/characters/janitor.png",
+}
+
+# Kolory dla typów personelu (używane w UI)
 const STAFF_COLORS: Dictionary = {
-	Enums.StaffType.GUARD: Color(0.2, 0.4, 0.2),      # Ciemno zielony
-	Enums.StaffType.COOK: Color(0.8, 0.8, 0.8),       # Biały
-	Enums.StaffType.MEDIC: Color(0.8, 0.2, 0.2),      # Czerwony (krzyż)
-	Enums.StaffType.PSYCHOLOGIST: Color(0.6, 0.4, 0.6), # Fioletowy
-	Enums.StaffType.JANITOR: Color(0.5, 0.5, 0.3),    # Brązowy
-	Enums.StaffType.PRIEST: Color(0.1, 0.1, 0.1),     # Czarny
-	Enums.StaffType.SNIPER: Color(0.3, 0.3, 0.3),     # Szary
-	Enums.StaffType.WARDEN: Color(0.8, 0.6, 0.2)      # Złoty
+	Enums.StaffType.GUARD: Color(0.2, 0.4, 0.2),
+	Enums.StaffType.COOK: Color(0.8, 0.8, 0.8),
+	Enums.StaffType.MEDIC: Color(0.8, 0.2, 0.2),
+	Enums.StaffType.PSYCHOLOGIST: Color(0.6, 0.4, 0.6),
+	Enums.StaffType.JANITOR: Color(0.5, 0.5, 0.3),
+	Enums.StaffType.PRIEST: Color(0.1, 0.1, 0.1),
+	Enums.StaffType.SNIPER: Color(0.3, 0.3, 0.3),
+	Enums.StaffType.WARDEN: Color(0.8, 0.6, 0.2)
 }
 
 # Pensje bazowe dla typów (pobierane z Constants)
@@ -108,12 +116,12 @@ func initialize(data: Dictionary) -> void:
 
 
 func _setup_visuals() -> void:
-	var color: Color = STAFF_COLORS.get(staff_type, Color.WHITE)
-
-	if color_rect:
-		color_rect.color = color
-		color_rect.size = Vector2(28, 28)
-		color_rect.position = Vector2(-14, -14)
+	# Załaduj odpowiedni sprite dla typu personelu
+	if sprite:
+		var sprite_path: String = str(STAFF_SPRITES.get(staff_type, "res://assets/sprites/characters/guard.png"))
+		var texture: Texture2D = load(sprite_path)
+		if texture:
+			sprite.texture = texture
 
 	z_index = 21  # Renderuj nad więźniami
 

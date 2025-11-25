@@ -75,14 +75,13 @@ var move_speed: float = 100.0  # pikseli/sekundę
 # WIZUALIZACJA
 # =============================================================================
 @onready var sprite: Sprite2D = $Sprite2D
-@onready var color_rect: ColorRect = $ColorRect  # Placeholder
 
-# Kolory dla kategorii bezpieczeństwa
-const CATEGORY_COLORS: Dictionary = {
-	Enums.SecurityCategory.LOW: Color(0.3, 0.5, 0.9),      # Niebieski
-	Enums.SecurityCategory.MEDIUM: Color(0.9, 0.6, 0.2),   # Pomarańczowy
-	Enums.SecurityCategory.HIGH: Color(0.9, 0.3, 0.3),     # Czerwony
-	Enums.SecurityCategory.MAXIMUM: Color(0.2, 0.2, 0.2)   # Czarny
+# Mapowanie kategorii na pliki sprite'ów
+const CATEGORY_SPRITES: Dictionary = {
+	Enums.SecurityCategory.LOW: "res://assets/sprites/characters/prisoner_low.png",
+	Enums.SecurityCategory.MEDIUM: "res://assets/sprites/characters/prisoner_medium.png",
+	Enums.SecurityCategory.HIGH: "res://assets/sprites/characters/prisoner_high.png",
+	Enums.SecurityCategory.MAXIMUM: "res://assets/sprites/characters/prisoner_max.png"
 }
 
 # =============================================================================
@@ -138,13 +137,12 @@ func initialize(data: Dictionary) -> void:
 
 
 func _setup_visuals() -> void:
-	# Ustaw kolor na podstawie kategorii
-	var color: Color = CATEGORY_COLORS.get(security_category, Color.WHITE)
-
-	if color_rect:
-		color_rect.color = color
-		color_rect.size = Vector2(32, 32)
-		color_rect.position = Vector2(-16, -16)
+	# Załaduj odpowiedni sprite dla kategorii bezpieczeństwa
+	if sprite:
+		var sprite_path: String = str(CATEGORY_SPRITES.get(security_category, "res://assets/sprites/characters/prisoner.png"))
+		var texture: Texture2D = load(sprite_path)
+		if texture:
+			sprite.texture = texture
 
 	# Z-index dla renderowania nad terenem
 	z_index = 20
