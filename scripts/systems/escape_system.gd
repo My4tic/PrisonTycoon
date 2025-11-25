@@ -239,7 +239,7 @@ func _generate_escape_route(start: Vector2i, end: Vector2i) -> Array[Vector2i]:
 # AKTUALIZACJA UCIECZEK
 # =============================================================================
 func _update_active_escapes(delta: float) -> void:
-	var game_delta: float = delta * GameManager.get_speed_multiplier()
+	var game_delta: float = delta * GameManager.get_current_speed()
 	var escapes_to_remove: Array = []
 
 	for escape in active_escapes:

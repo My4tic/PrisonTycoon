@@ -188,7 +188,7 @@ func start_fight(location: Vector2i, participants: Array) -> int:
 # AKTUALIZACJA BÓJEK
 # =============================================================================
 func _update_active_fights(delta: float) -> void:
-	var game_delta: float = delta * GameManager.get_speed_multiplier()
+	var game_delta: float = delta * GameManager.get_current_speed()
 	var fights_to_remove: Array = []
 
 	for fight in active_fights:

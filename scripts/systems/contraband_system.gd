@@ -74,7 +74,7 @@ func _process(delta: float) -> void:
 		return
 
 	# Generuj kontrabandę
-	_generation_timer += delta * GameManager.get_speed_multiplier()
+	_generation_timer += delta * GameManager.get_current_speed()
 	if _generation_timer >= GENERATION_INTERVAL:
 		_generation_timer = 0.0
 		_generate_contraband()

@@ -163,7 +163,7 @@ func _connect_signals() -> void:
 func _update_needs(delta_time: float) -> void:
 	# Przelicz delta na godziny in-game
 	# 1 sekunda real = 1 minuta in-game przy x1
-	var game_hours: float = delta_time / 60.0 * GameManager.get_speed_multiplier()
+	var game_hours: float = delta_time / 60.0 * GameManager.get_current_speed()
 
 	for need_type in needs.keys():
 		var old_value: float = needs[need_type]
