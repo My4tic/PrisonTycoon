@@ -188,25 +188,25 @@ func _create_default_catalog() -> void:
 # INFORMACJE O BUDYNKACH
 # =============================================================================
 func get_building_info(building_type: Enums.BuildingType) -> Dictionary:
-	var type_name := Enums.BuildingType.keys()[building_type]
+	var type_name: String = Enums.BuildingType.keys()[building_type]
 	if building_catalog.has(type_name):
 		return building_catalog[type_name]
 	return {}
 
 
 func get_building_cost(building_type: Enums.BuildingType) -> int:
-	var info := get_building_info(building_type)
+	var info: Dictionary = get_building_info(building_type)
 	return info.get("cost", 0)
 
 
 func get_building_size(building_type: Enums.BuildingType) -> Vector2i:
-	var info := get_building_info(building_type)
+	var info: Dictionary = get_building_info(building_type)
 	var size_array: Array = info.get("size", [1, 1])
 	return Vector2i(size_array[0], size_array[1])
 
 
 func get_building_name(building_type: Enums.BuildingType) -> String:
-	var info := get_building_info(building_type)
+	var info: Dictionary = get_building_info(building_type)
 	return info.get("name", "Nieznany")
 
 
@@ -349,17 +349,17 @@ func get_buildings_by_type(building_type: Enums.BuildingType) -> Array[BuildingD
 func get_buildings_by_category(category: Enums.BuildingCategory) -> Array[BuildingData]:
 	var result: Array[BuildingData] = []
 	for building in buildings.values():
-		var info := get_building_info(building.type)
-		var cat_name := Enums.BuildingCategory.keys()[category]
+		var info: Dictionary = get_building_info(building.type)
+		var cat_name: String = Enums.BuildingCategory.keys()[category]
 		if info.get("category", "") == cat_name:
 			result.append(building)
 	return result
 
 
 func get_total_capacity(building_type: Enums.BuildingType) -> int:
-	var total := 0
+	var total: int = 0
 	for building in get_buildings_by_type(building_type):
-		var info := get_building_info(building.type)
+		var info: Dictionary = get_building_info(building.type)
 		total += info.get("capacity", 0)
 	return total
 
@@ -372,7 +372,7 @@ func count_buildings() -> int:
 # SAVE/LOAD
 # =============================================================================
 func get_save_data() -> Dictionary:
-	var buildings_data := []
+	var buildings_data: Array = []
 	for building in buildings.values():
 		buildings_data.append({
 			"id": building.id,
@@ -396,9 +396,11 @@ func load_save_data(data: Dictionary) -> void:
 	_next_building_id = data.get("next_id", 1)
 
 	for b_data in data.get("buildings", []):
-		var pos := Vector2i(b_data["position"][0], b_data["position"][1])
-		var size := Vector2i(b_data["size"][0], b_data["size"][1])
-		var building := BuildingData.new(b_data["id"], b_data["type"], pos, size)
+		var pos_arr: Array = b_data["position"]
+		var size_arr: Array = b_data["size"]
+		var pos: Vector2i = Vector2i(pos_arr[0], pos_arr[1])
+		var size: Vector2i = Vector2i(size_arr[0], size_arr[1])
+		var building: BuildingData = BuildingData.new(b_data["id"], b_data["type"], pos, size)
 		building.is_constructed = b_data.get("is_constructed", true)
 		building.current_occupancy = b_data.get("current_occupancy", 0)
 		buildings[building.id] = building

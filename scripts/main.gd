@@ -13,26 +13,32 @@ extends Node2D
 @onready var staff_container: Node2D = $World/Entities/Staff
 @onready var navigation_region: NavigationRegion2D = $World/NavigationRegion2D
 
-# UI References
-@onready var hud: Control = $UI/HUD
-@onready var day_label: Label = $UI/HUD/TopBar/HBoxContainer/DayLabel
-@onready var capital_label: Label = $UI/HUD/TopBar/HBoxContainer/CapitalLabel
-@onready var prisoner_count_label: Label = $UI/HUD/TopBar/HBoxContainer/PrisonerCount
-@onready var alert_badge: Label = $UI/HUD/BottomMenu/HBoxContainer/AlertsButton/AlertBadge
+# UI References - nowa struktura z SafeArea
+@onready var safe_area: MarginContainer = $UI/SafeArea
+@onready var hud: Control = $UI/SafeArea/HUD
+@onready var panels_container: Control = $UI/SafeArea/HUD/Panels
+
+# Top Bar
+@onready var day_label: Label = $UI/SafeArea/HUD/TopBar/MarginContainer/HBoxContainer/TimeContainer/DayLabel
+@onready var time_label: Label = $UI/SafeArea/HUD/TopBar/MarginContainer/HBoxContainer/TimeContainer/TimeLabel
+@onready var capital_label: Label = $UI/SafeArea/HUD/TopBar/MarginContainer/HBoxContainer/StatsContainer/CapitalContainer/CapitalLabel
+@onready var prisoner_count_label: Label = $UI/SafeArea/HUD/TopBar/MarginContainer/HBoxContainer/StatsContainer/PrisonersContainer/PrisonerCountLabel
 
 # Speed buttons
-@onready var pause_button: Button = $UI/HUD/TopBar/HBoxContainer/SpeedControls/PauseButton
-@onready var speed1_button: Button = $UI/HUD/TopBar/HBoxContainer/SpeedControls/Speed1Button
-@onready var speed2_button: Button = $UI/HUD/TopBar/HBoxContainer/SpeedControls/Speed2Button
-@onready var speed4_button: Button = $UI/HUD/TopBar/HBoxContainer/SpeedControls/Speed4Button
+@onready var pause_button: Button = $UI/SafeArea/HUD/TopBar/MarginContainer/HBoxContainer/SpeedControls/PauseButton
+@onready var speed1_button: Button = $UI/SafeArea/HUD/TopBar/MarginContainer/HBoxContainer/SpeedControls/Speed1Button
+@onready var speed2_button: Button = $UI/SafeArea/HUD/TopBar/MarginContainer/HBoxContainer/SpeedControls/Speed2Button
+@onready var speed4_button: Button = $UI/SafeArea/HUD/TopBar/MarginContainer/HBoxContainer/SpeedControls/Speed4Button
+@onready var settings_button: Button = $UI/SafeArea/HUD/TopBar/MarginContainer/HBoxContainer/SettingsButton
 
 # Bottom menu buttons
-@onready var build_button: Button = $UI/HUD/BottomMenu/HBoxContainer/BuildButton
-@onready var prisoners_button: Button = $UI/HUD/BottomMenu/HBoxContainer/PrisonersButton
-@onready var schedule_button: Button = $UI/HUD/BottomMenu/HBoxContainer/ScheduleButton
-@onready var staff_button: Button = $UI/HUD/BottomMenu/HBoxContainer/StaffButton
-@onready var stats_button: Button = $UI/HUD/BottomMenu/HBoxContainer/StatsButton
-@onready var alerts_button: Button = $UI/HUD/BottomMenu/HBoxContainer/AlertsButton
+@onready var build_button: Button = $UI/SafeArea/HUD/BottomBar/MarginContainer/ScrollContainer/MenuButtons/BuildButton
+@onready var prisoners_button: Button = $UI/SafeArea/HUD/BottomBar/MarginContainer/ScrollContainer/MenuButtons/PrisonersButton
+@onready var schedule_button: Button = $UI/SafeArea/HUD/BottomBar/MarginContainer/ScrollContainer/MenuButtons/ScheduleButton
+@onready var staff_button: Button = $UI/SafeArea/HUD/BottomBar/MarginContainer/ScrollContainer/MenuButtons/StaffButton
+@onready var stats_button: Button = $UI/SafeArea/HUD/BottomBar/MarginContainer/ScrollContainer/MenuButtons/StatsButton
+@onready var alerts_button: Button = $UI/SafeArea/HUD/BottomBar/MarginContainer/ScrollContainer/MenuButtons/AlertsButton
+@onready var alert_badge: Label = $UI/SafeArea/HUD/BottomBar/MarginContainer/ScrollContainer/MenuButtons/AlertsButton/AlertBadge
 
 # =============================================================================
 # ZMIENNE KAMERY
@@ -40,6 +46,11 @@ extends Node2D
 var _is_dragging: bool = false
 var _drag_start_pos: Vector2 = Vector2.ZERO
 var _camera_start_pos: Vector2 = Vector2.ZERO
+
+# Touch/pinch zoom
+var _touch_points: Dictionary = {}  # touch_index -> position
+var _initial_pinch_distance: float = 0.0
+var _initial_zoom: float = 1.0
 
 # =============================================================================
 # FUNKCJE GODOT
@@ -81,6 +92,7 @@ func _connect_buttons() -> void:
 	speed1_button.pressed.connect(_on_speed1_pressed)
 	speed2_button.pressed.connect(_on_speed2_pressed)
 	speed4_button.pressed.connect(_on_speed4_pressed)
+	settings_button.pressed.connect(_on_settings_pressed)
 
 	build_button.pressed.connect(_on_build_pressed)
 	prisoners_button.pressed.connect(_on_prisoners_pressed)
@@ -102,34 +114,74 @@ func _setup_camera() -> void:
 
 
 func _handle_camera_input(event: InputEvent) -> void:
-	# Obsługa drag (pan)
+	# Obsługa multi-touch (pinch zoom)
+	if event is InputEventScreenTouch:
+		var touch_event := event as InputEventScreenTouch
+		if touch_event.pressed:
+			_touch_points[touch_event.index] = touch_event.position
+			if _touch_points.size() == 2:
+				_start_pinch_zoom()
+		else:
+			_touch_points.erase(touch_event.index)
+			if _touch_points.size() < 2:
+				_initial_pinch_distance = 0.0
+		return
+
+	# Obsługa screen drag (jeden palec lub więcej)
+	if event is InputEventScreenDrag:
+		var drag_event := event as InputEventScreenDrag
+		_touch_points[drag_event.index] = drag_event.position
+
+		if _touch_points.size() == 2:
+			# Pinch zoom
+			_handle_pinch_zoom()
+		elif _touch_points.size() == 1:
+			# Pan kamera
+			camera.position -= drag_event.relative / camera.zoom
+		return
+
+	# Obsługa myszy (dla testowania na PC)
 	if event is InputEventMouseButton:
-		if event.button_index == MOUSE_BUTTON_LEFT:
-			if event.pressed:
+		var mouse_event := event as InputEventMouseButton
+		if mouse_event.button_index == MOUSE_BUTTON_LEFT:
+			if mouse_event.pressed:
 				_is_dragging = true
-				_drag_start_pos = event.position
+				_drag_start_pos = mouse_event.position
 				_camera_start_pos = camera.position
 			else:
 				_is_dragging = false
-
-		# Zoom kółkiem myszy
-		elif event.button_index == MOUSE_BUTTON_WHEEL_UP:
+		elif mouse_event.button_index == MOUSE_BUTTON_WHEEL_UP:
 			_zoom_camera(Constants.CAMERA_ZOOM_SPEED)
-		elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
+		elif mouse_event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
 			_zoom_camera(-Constants.CAMERA_ZOOM_SPEED)
+		return
 
-	elif event is InputEventMouseMotion and _is_dragging:
-		var drag_delta := event.position - _drag_start_pos
+	if event is InputEventMouseMotion and _is_dragging:
+		var mouse_motion := event as InputEventMouseMotion
+		var drag_delta: Vector2 = mouse_motion.position - _drag_start_pos
 		camera.position = _camera_start_pos - drag_delta / camera.zoom
 
-	# Obsługa dotyku (pinch zoom) - będzie rozbudowane
-	elif event is InputEventScreenDrag:
-		# Single finger drag
-		camera.position -= event.relative / camera.zoom
+
+func _start_pinch_zoom() -> void:
+	var points: Array = _touch_points.values()
+	if points.size() >= 2:
+		_initial_pinch_distance = (points[0] as Vector2).distance_to(points[1] as Vector2)
+		_initial_zoom = camera.zoom.x
+
+
+func _handle_pinch_zoom() -> void:
+	var points: Array = _touch_points.values()
+	if points.size() < 2 or _initial_pinch_distance <= 0:
+		return
+
+	var current_distance: float = (points[0] as Vector2).distance_to(points[1] as Vector2)
+	var zoom_factor: float = current_distance / _initial_pinch_distance
+	var new_zoom: float = clampf(_initial_zoom * zoom_factor, Constants.CAMERA_ZOOM_MIN, Constants.CAMERA_ZOOM_MAX)
+	camera.zoom = Vector2(new_zoom, new_zoom)
 
 
 func _zoom_camera(delta: float) -> void:
-	var new_zoom := camera.zoom.x + delta
+	var new_zoom: float = camera.zoom.x + delta
 	new_zoom = clampf(new_zoom, Constants.CAMERA_ZOOM_MIN, Constants.CAMERA_ZOOM_MAX)
 	camera.zoom = Vector2(new_zoom, new_zoom)
 	Signals.camera_zoom_changed.emit(new_zoom)
@@ -147,39 +199,59 @@ func _update_ui() -> void:
 
 
 func _update_time_display() -> void:
-	day_label.text = GameManager.get_full_time_string()
+	day_label.text = "Dzień %d" % GameManager.current_day
+	time_label.text = GameManager.get_time_string()
 
 
 func _update_capital_display() -> void:
-	capital_label.text = "$%s" % _format_number(EconomyManager.capital)
+	var formatted: String = _format_number(EconomyManager.capital)
+	capital_label.text = "$%s" % formatted
+
+	# Zmień kolor przy niskim kapitale
+	if EconomyManager.capital < 5000:
+		capital_label.add_theme_color_override("font_color", Color(1.0, 0.3, 0.3))
+	elif EconomyManager.capital < 10000:
+		capital_label.add_theme_color_override("font_color", Color(1.0, 0.8, 0.3))
+	else:
+		capital_label.remove_theme_color_override("font_color")
 
 
 func _update_prisoner_count() -> void:
 	# TODO: Pobierz rzeczywistą liczbę więźniów
-	var current := 0
-	var max_capacity := BuildingManager.get_total_capacity(Enums.BuildingType.CELL_SINGLE)
+	var current: int = 0
+	var max_capacity: int = BuildingManager.get_total_capacity(Enums.BuildingType.CELL_SINGLE)
 	max_capacity += BuildingManager.get_total_capacity(Enums.BuildingType.CELL_DOUBLE)
 	max_capacity += BuildingManager.get_total_capacity(Enums.BuildingType.DORMITORY)
 	prisoner_count_label.text = "%d/%d" % [current, max_capacity]
 
 
 func _update_alert_badge() -> void:
-	var count := EventManager.get_alert_count()
+	var count: int = EventManager.get_alert_count()
 	alert_badge.text = str(count)
 	alert_badge.visible = count > 0
 
 
 func _update_speed_buttons() -> void:
-	pause_button.button_pressed = GameManager.is_paused
-	speed1_button.button_pressed = GameManager.speed_index == 1 and not GameManager.is_paused
-	speed2_button.button_pressed = GameManager.speed_index == 2
-	speed4_button.button_pressed = GameManager.speed_index == 3
+	# Reset wszystkich przycisków
+	pause_button.button_pressed = false
+	speed1_button.button_pressed = false
+	speed2_button.button_pressed = false
+	speed4_button.button_pressed = false
+
+	# Zaznacz aktywny
+	if GameManager.is_paused:
+		pause_button.button_pressed = true
+	else:
+		match GameManager.speed_index:
+			1: speed1_button.button_pressed = true
+			2: speed2_button.button_pressed = true
+			3: speed4_button.button_pressed = true
 
 
 func _format_number(value: int) -> String:
-	var str_value := str(abs(value))
-	var result := ""
-	var count := 0
+	var str_value: String = str(abs(value))
+	var result: String = ""
+	var count: int = 0
 
 	for i in range(str_value.length() - 1, -1, -1):
 		if count > 0 and count % 3 == 0:
@@ -241,6 +313,11 @@ func _on_speed2_pressed() -> void:
 
 func _on_speed4_pressed() -> void:
 	GameManager.set_speed(3)
+
+
+func _on_settings_pressed() -> void:
+	# TODO: Otwórz panel ustawień
+	print("Settings pressed")
 
 
 # =============================================================================

@@ -92,7 +92,7 @@ func get_activity(category: Enums.SecurityCategory, hour: int) -> Enums.Schedule
 	if is_lockdown:
 		return Enums.ScheduleActivity.LOCKDOWN
 
-	var schedule := get_schedule(category)
+	var schedule: Dictionary = get_schedule(category)
 	return schedule.get(hour, Enums.ScheduleActivity.FREE_TIME)
 
 
@@ -252,7 +252,7 @@ func get_activity_building_types(activity: Enums.ScheduleActivity) -> Array[Enum
 # =============================================================================
 func get_schedule_for_display(category: Enums.SecurityCategory) -> Array[Dictionary]:
 	var result: Array[Dictionary] = []
-	var schedule := get_schedule(category)
+	var schedule: Dictionary = get_schedule(category)
 
 	for hour in range(24):
 		var activity: Enums.ScheduleActivity = schedule.get(hour, Enums.ScheduleActivity.FREE_TIME)

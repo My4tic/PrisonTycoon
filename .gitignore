@@ -1,0 +1,34 @@
+# Godot 4+ specific ignores
+.godot/
+
+# Godot UID files (auto-generated)
+*.uid
+
+# Godot import files
+*.import
+
+# Mono-specific ignores
+.mono/
+data_*/
+mono_crash.*.json
+
+# Builds
+build/
+export/
+*.apk
+*.ipa
+*.exe
+*.dmg
+*.zip
+
+# OS generated files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~

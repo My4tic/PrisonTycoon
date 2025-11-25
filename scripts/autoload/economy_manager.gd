@@ -87,7 +87,7 @@ func get_capital() -> int:
 # SUBWENCJE
 # =============================================================================
 func calculate_daily_subsidies(prisoners_by_category: Dictionary) -> int:
-	var total := 0
+	var total: int = 0
 
 	if prisoners_by_category.has(Enums.SecurityCategory.LOW):
 		total += prisoners_by_category[Enums.SecurityCategory.LOW] * Constants.SUBSIDY_LOW_SECURITY
@@ -105,7 +105,7 @@ func calculate_daily_subsidies(prisoners_by_category: Dictionary) -> int:
 # WYDATKI DZIENNE
 # =============================================================================
 func calculate_daily_salaries(staff_counts: Dictionary) -> int:
-	var total := 0
+	var total: int = 0
 
 	if staff_counts.has(Enums.StaffType.GUARD):
 		total += staff_counts[Enums.StaffType.GUARD] * Constants.SALARY_GUARD
@@ -182,14 +182,14 @@ func repay_loan(amount: int) -> bool:
 # BILANS DZIENNY
 # =============================================================================
 func get_total_daily_revenue() -> int:
-	var total := 0
+	var total: int = 0
 	for key in daily_revenue:
 		total += daily_revenue[key]
 	return total
 
 
 func get_total_daily_expenses() -> int:
-	var total := 0
+	var total: int = 0
 	for key in daily_expenses:
 		total += daily_expenses[key]
 	return total
@@ -237,15 +237,15 @@ func get_balance_trend() -> float:
 	if balance_history.size() < 7:
 		return 0.0
 
-	var recent := balance_history.slice(-7)
-	var avg_recent := 0.0
+	var recent: Array = balance_history.slice(-7)
+	var avg_recent: float = 0.0
 	for val in recent:
 		avg_recent += val
 	avg_recent /= recent.size()
 
 	if balance_history.size() >= 14:
-		var older := balance_history.slice(-14, -7)
-		var avg_older := 0.0
+		var older: Array = balance_history.slice(-14, -7)
+		var avg_older: float = 0.0
 		for val in older:
 			avg_older += val
 		avg_older /= older.size()

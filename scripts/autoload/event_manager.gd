@@ -171,7 +171,7 @@ func get_alert_count() -> int:
 
 
 func get_critical_alert_count() -> int:
-	var count := 0
+	var count: int = 0
 	for alert in active_alerts:
 		if alert.priority == Enums.AlertPriority.CRITICAL:
 			count += 1
@@ -350,7 +350,7 @@ func has_active_crisis() -> bool:
 # SAVE/LOAD
 # =============================================================================
 func get_save_data() -> Dictionary:
-	var events_data := []
+	var events_data: Array = []
 	for event in active_events:
 		events_data.append({
 			"id": event.id,
@@ -378,8 +378,9 @@ func load_save_data(data: Dictionary) -> void:
 
 	active_events.clear()
 	for e_data in data.get("events", []):
-		var loc := Vector2i(e_data["location"][0], e_data["location"][1])
-		var event := EventData.new(e_data["id"], e_data["type"], loc)
+		var loc_arr: Array = e_data["location"]
+		var loc: Vector2i = Vector2i(loc_arr[0], loc_arr[1])
+		var event: EventData = EventData.new(e_data["id"], e_data["type"], loc)
 		event.participants = e_data.get("participants", [])
 		event.start_time = e_data.get("start_time", {})
 		event.data = e_data.get("data", {})
