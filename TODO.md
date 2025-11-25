@@ -71,47 +71,51 @@ Prison Tycoon to mobilna gra symulacyjna typu management sim, gdzie gracz buduje
 
 ---
 
-## FAZA 2: SYSTEM BUDOWANIA 🔄 NASTĘPNA
+## FAZA 2: SYSTEM BUDOWANIA ✅ UKOŃCZONA
 **Czas: 2-3 tygodnie | Priorytet: KRYTYCZNY**
 
-### 2.1 BuildingManager (Singleton) - częściowo gotowy
+### 2.1 BuildingManager (Singleton) ✅
 - [x] Katalog wszystkich typów budynków (loaded from JSON) - buildings.json
-- [ ] Funkcje: can_build(), place_building(), remove_building()
-- [ ] Walidacja: kolizje, budżet, wymagania techniczne
-- [ ] Integracja z EconomyManager dla kosztów
+- [x] Funkcje: can_build(), place_building(), remove_building()
+- [x] Walidacja: kolizje, budżet, wymagania techniczne
+- [x] Integracja z EconomyManager dla kosztów
 
-### 2.2 Building Base Class
-- Area2D jako bazowa klasa
-- Właściwości: type, size, cost, capacity, effects
-- Wykrywanie wejścia/wyjścia więźniów (sygnały)
-- Sprite rendering dopasowany do tile size
-- Funkcja niszczenia: destroy()
+### 2.2 Building Base Class ✅
+- [x] Area2D jako bazowa klasa - scripts/buildings/building.gd
+- [x] Właściwości: type, size, cost, capacity, effects
+- [x] Wykrywanie wejścia/wyjścia więźniów (sygnały)
+- [x] Sprite rendering dopasowany do tile size (ColorRect placeholder)
+- [x] Funkcja destroy() w BuildingManager.remove_building()
 
-### 2.3 Podstawowe typy budynków (5 priorytetowych)
-- **Cell**: pojedyncza/podwójna/dormitorium (sleep satisfaction)
-- **Canteen**: kantyna (eating satisfaction)
-- **Kitchen**: kuchnia (produkcja posiłków)
-- **Yard**: podwórko (freedom satisfaction)
-- **Workshop**: warsztat (work satisfaction + revenue)
+### 2.3 Podstawowe typy budynków (24 zdefiniowane w JSON) ✅
+- [x] **Cell**: pojedyncza/podwójna/dormitorium/luksusowa/izolatka
+- [x] **Canteen**: kantyna (eating satisfaction)
+- [x] **Kitchen**: kuchnia (produkcja posiłków)
+- [x] **Yard**: podwórko (freedom satisfaction)
+- [x] **Workshop**: warsztat stolarski, pralnia, ogród, call center
+- [x] Rekreacja: siłownia, biblioteka, kaplica, sala TV
+- [x] Infrastruktura: ambulatorium, posterunek, recepcja, magazyn, prysznice
+- [x] Bezpieczeństwo: kamery, detektory, alarmy, wieże, checkpointy
 
-### 2.4 Build Mode UI
-- Panel wyboru budynków z kategoriami
-- Ghost preview podczas umieszczania (transparentny)
-- Drag to create rectangle dla większych pomieszczeń
-- Walidacja wizualna (zielony = OK, czerwony = błąd)
-- Wyświetlanie kosztu w czasie rzeczywistym
-- Przyciski: Potwierdź / Anuluj
+### 2.4 Build Mode UI ✅
+- [x] Panel wyboru budynków z kategoriami - scenes/ui/build_menu.tscn
+- [x] Ghost preview podczas umieszczania - scenes/buildings/build_ghost.tscn
+- [x] Walidacja wizualna (zielony = OK, czerwony = błąd)
+- [x] Wyświetlanie kosztu w czasie rzeczywistym
+- [x] BuildModeController - scripts/controllers/build_mode_controller.gd
+- [ ] TODO: Drag to create rectangle dla większych pomieszczeń (post-MVP)
 
-### 2.5 Ściany i drzwi
-- 4 typy ścian (drewno, cegła, beton, stal)
-- Auto-walls przy tworzeniu zamkniętych pomieszczeń
-- System drzwi (manual placement)
-- Kolizje dla pathfindingu
-- Wytrzymałość ścian (dla mechaniki ucieczek)
+### 2.5 Ściany i drzwi ✅
+- [x] 4 typy ścian (drewno, cegła, beton, stal) - w GridManager
+- [x] Auto-walls przy umieszczaniu budynków wewnętrznych
+- [x] System drzwi (DoorData, open/close/lock/unlock)
+- [x] Kolizje dla pathfindingu (walkable_cache)
+- [x] Wytrzymałość ścian (WALL_DURABILITY dla mechaniki ucieczek)
+- [ ] TODO: UI do ręcznego umieszczania ścian/drzwi (post-MVP)
 
 ---
 
-## FAZA 3: EKONOMIA
+## FAZA 3: EKONOMIA 🔄 NASTĘPNA
 **Czas: 1-2 tygodnie | Priorytet: KRYTYCZNY**
 
 ### 3.1 EconomyManager (Singleton)

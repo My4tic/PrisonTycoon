@@ -3,6 +3,12 @@
 extends Node2D
 
 # =============================================================================
+# PRELOAD
+# =============================================================================
+const BuildGhostScene := preload("res://scenes/buildings/build_ghost.tscn")
+const BuildMenuScene := preload("res://scenes/ui/build_menu.tscn")
+
+# =============================================================================
 # REFERENCJE DO WĘZŁÓW
 # =============================================================================
 @onready var camera: Camera2D = $Camera2D
@@ -17,6 +23,11 @@ extends Node2D
 @onready var safe_area: MarginContainer = $UI/SafeArea
 @onready var hud: Control = $UI/SafeArea/HUD
 @onready var panels_container: Control = $UI/SafeArea/HUD/Panels
+
+# Build Mode
+var build_mode_controller: BuildModeController = null
+var build_ghost: BuildGhost = null
+var build_menu: BuildMenu = null
 
 # Top Bar
 @onready var day_label: Label = $UI/SafeArea/HUD/TopBar/MarginContainer/HBoxContainer/TimeContainer/DayLabel
@@ -65,6 +76,7 @@ func _ready() -> void:
 	_connect_signals()
 	_connect_buttons()
 	_setup_camera()
+	_setup_build_mode()
 
 	# Inicjalizuj managery
 	GridManager.initialize(tilemap)
@@ -81,6 +93,10 @@ func _process(_delta: float) -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	# Najpierw sprawdź tryb budowania
+	if build_mode_controller and build_mode_controller.handle_input(event):
+		return
+
 	_handle_camera_input(event)
 
 
@@ -121,6 +137,21 @@ func _setup_camera() -> void:
 		Constants.GRID_HEIGHT * Constants.TILE_SIZE / 2.0
 	)
 	camera.zoom = Vector2(1.0, 1.0)
+
+
+func _setup_build_mode() -> void:
+	# Utwórz BuildGhost
+	build_ghost = BuildGhostScene.instantiate() as BuildGhost
+	world.add_child(build_ghost)
+
+	# Utwórz BuildMenu
+	build_menu = BuildMenuScene.instantiate() as BuildMenu
+	panels_container.add_child(build_menu)
+
+	# Utwórz kontroler
+	build_mode_controller = BuildModeController.new()
+	add_child(build_mode_controller)
+	build_mode_controller.initialize(build_ghost, build_menu, buildings_container, camera)
 
 
 func _handle_camera_input(event: InputEvent) -> void:
@@ -387,8 +418,8 @@ func _on_settings_pressed() -> void:
 # OBSŁUGA PRZYCISKÓW MENU
 # =============================================================================
 func _on_build_pressed() -> void:
-	# TODO: Otwórz panel budowania
-	print("Build menu pressed")
+	if build_mode_controller:
+		build_mode_controller.toggle_build_mode()
 
 
 func _on_prisoners_pressed() -> void:

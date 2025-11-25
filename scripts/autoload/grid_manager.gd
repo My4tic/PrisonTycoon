@@ -72,6 +72,29 @@ var _tileset: TileSet = null
 # Cache dla szybkiego sprawdzania
 var _walkable_cache: Dictionary = {}  # Vector2i -> bool
 
+# System drzwi
+var _doors: Dictionary = {}  # Vector2i -> DoorData
+
+# Wytrzymałość ścian
+const WALL_DURABILITY: Dictionary = {
+	Enums.WallType.WOOD: 50,
+	Enums.WallType.BRICK: 100,
+	Enums.WallType.CONCRETE: 200,
+	Enums.WallType.STEEL: 500
+}
+
+class DoorData:
+	var position: Vector2i
+	var door_type: Enums.DoorType
+	var is_open: bool = false
+	var is_locked: bool = false
+	var durability: int = 100
+
+	func _init(pos: Vector2i, type: Enums.DoorType) -> void:
+		position = pos
+		door_type = type
+		is_locked = (type != Enums.DoorType.BASIC)
+
 
 # =============================================================================
 # INICJALIZACJA
@@ -264,6 +287,121 @@ func draw_wall_rect(top_left: Vector2i, size: Vector2i, atlas_coords: Vector2i, 
 		)
 
 
+func get_wall_type_from_atlas(atlas_coords: Vector2i) -> Enums.WallType:
+	if atlas_coords == WALL_WOOD:
+		return Enums.WallType.WOOD
+	elif atlas_coords == WALL_BRICK:
+		return Enums.WallType.BRICK
+	elif atlas_coords == WALL_CONCRETE:
+		return Enums.WallType.CONCRETE
+	elif atlas_coords == WALL_STEEL:
+		return Enums.WallType.STEEL
+	return Enums.WallType.BRICK
+
+
+func get_wall_atlas_from_type(wall_type: Enums.WallType) -> Vector2i:
+	match wall_type:
+		Enums.WallType.WOOD:
+			return WALL_WOOD
+		Enums.WallType.BRICK:
+			return WALL_BRICK
+		Enums.WallType.CONCRETE:
+			return WALL_CONCRETE
+		Enums.WallType.STEEL:
+			return WALL_STEEL
+		_:
+			return WALL_BRICK
+
+
+# =============================================================================
+# OPERACJE NA DRZWIACH
+# =============================================================================
+func place_door(cell: Vector2i, door_type: Enums.DoorType) -> bool:
+	# Drzwi można umieścić tylko w miejscu ściany
+	if not has_wall(cell):
+		return false
+
+	var door := DoorData.new(cell, door_type)
+	_doors[cell] = door
+
+	# Drzwi są domyślnie zamknięte ale przechodne
+	_walkable_cache[cell] = true
+
+	Signals.wall_removed.emit(cell)  # Usuwamy ścianę wizualnie
+	return true
+
+
+func remove_door(cell: Vector2i) -> void:
+	if _doors.has(cell):
+		_doors.erase(cell)
+
+
+func has_door(cell: Vector2i) -> bool:
+	return _doors.has(cell)
+
+
+func get_door(cell: Vector2i) -> DoorData:
+	return _doors.get(cell)
+
+
+func open_door(cell: Vector2i) -> void:
+	if _doors.has(cell):
+		var door: DoorData = _doors[cell]
+		if not door.is_locked:
+			door.is_open = true
+			_walkable_cache[cell] = true
+
+
+func close_door(cell: Vector2i) -> void:
+	if _doors.has(cell):
+		var door: DoorData = _doors[cell]
+		door.is_open = false
+
+
+func lock_door(cell: Vector2i) -> void:
+	if _doors.has(cell):
+		var door: DoorData = _doors[cell]
+		door.is_locked = true
+		door.is_open = false
+		_walkable_cache[cell] = false
+
+
+func unlock_door(cell: Vector2i) -> void:
+	if _doors.has(cell):
+		var door: DoorData = _doors[cell]
+		door.is_locked = false
+		_walkable_cache[cell] = true
+
+
+func is_door_open(cell: Vector2i) -> bool:
+	if _doors.has(cell):
+		return _doors[cell].is_open
+	return false
+
+
+func is_door_locked(cell: Vector2i) -> bool:
+	if _doors.has(cell):
+		return _doors[cell].is_locked
+	return false
+
+
+func get_all_doors() -> Array[Vector2i]:
+	var result: Array[Vector2i] = []
+	for cell in _doors.keys():
+		result.append(cell)
+	return result
+
+
+func lock_all_doors() -> void:
+	for cell in _doors.keys():
+		lock_door(cell)
+
+
+func unlock_all_doors() -> void:
+	for cell in _doors.keys():
+		unlock_door(cell)
+
+
 # =============================================================================
 # KONWERSJA WSPÓŁRZĘDNYCH
 # =============================================================================
@@ -399,6 +537,45 @@ func _on_building_placed(building_type: int, position: Vector2i, size: Vector2i)
 	for x in range(size.x):
 		for y in range(size.y):
 			_walkable_cache[Vector2i(position.x + x, position.y + y)] = true
+
+	# Dodaj automatyczne ściany dla budynków wewnętrznych (nie outdoor)
+	var info: Dictionary = BuildingManager.get_building_info(building_type)
+	var is_outdoor: bool = info.get("outdoor", false)
+
+	if not is_outdoor and _should_have_walls(building_type):
+		var wall_type := _get_wall_for_building(building_type)
+		draw_wall_rect(position, size, wall_type, false)
+
+
+func _should_have_walls(building_type: int) -> bool:
+	# Większość budynków ma ściany z wyjątkiem specjalnych
+	match building_type:
+		Enums.BuildingType.YARD, Enums.BuildingType.GARDEN:
+			return false
+		Enums.BuildingType.CAMERA, Enums.BuildingType.ALARM, \
+		Enums.BuildingType.METAL_DETECTOR:
+			return false
+		_:
+			return true
+
+
+func _get_wall_for_building(building_type: int) -> Vector2i:
+	var info: Dictionary = BuildingManager.building_catalog.get(
+		Enums.BuildingType.keys()[building_type], {}
+	)
+	var wall_type_name: String = info.get("wall_type", "BRICK")
+
+	match wall_type_name:
+		"WOOD":
+			return WALL_WOOD
+		"BRICK":
+			return WALL_BRICK
+		"CONCRETE":
+			return WALL_CONCRETE
+		"STEEL":
+			return WALL_STEEL
+		_:
+			return WALL_BRICK
 
 
 func _on_building_removed(building_type: int, position: Vector2i) -> void:
