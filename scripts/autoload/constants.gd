@@ -38,12 +38,30 @@ const FOOD_COST_TRAY_SERVICE: int = 15  # gdy dostarczane do cel
 const UTILITY_BASE_COST: int = 50  # podstawowe media dziennie
 
 # Pensje personelu (dziennie)
-const SALARY_GUARD: int = 150
-const SALARY_COOK: int = 100
-const SALARY_MEDIC: int = 200
-const SALARY_PSYCHOLOGIST: int = 250
-const SALARY_JANITOR: int = 80
-const SALARY_PRIEST: int = 120
+const SALARY_GUARD: int = 100
+const SALARY_COOK: int = 80
+const SALARY_MEDIC: int = 150
+const SALARY_PSYCHOLOGIST: int = 180
+const SALARY_JANITOR: int = 60
+const SALARY_PRIEST: int = 70
+const SALARY_SNIPER: int = 200
+const SALARY_WARDEN: int = 300
+
+# Słownik pensji dla łatwego dostępu (używany w UI)
+var STAFF_SALARIES: Dictionary = {}
+
+func _ready() -> void:
+	# Inicjalizacja słownika pensji (nie można użyć Enums w const)
+	STAFF_SALARIES = {
+		0: SALARY_GUARD,       # GUARD
+		1: SALARY_COOK,        # COOK
+		2: SALARY_MEDIC,       # MEDIC
+		3: SALARY_PSYCHOLOGIST, # PSYCHOLOGIST
+		4: SALARY_JANITOR,     # JANITOR
+		5: SALARY_PRIEST,      # PRIEST
+		6: SALARY_SNIPER,      # SNIPER
+		7: SALARY_WARDEN       # WARDEN
+	}
 
 # Pożyczka
 const EMERGENCY_LOAN_AMOUNT: int = 20000

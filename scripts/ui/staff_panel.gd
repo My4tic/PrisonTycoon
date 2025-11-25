@@ -96,7 +96,7 @@ func _create_staff_row(staff) -> void:
 	# Kolor typu
 	var color_rect := ColorRect.new()
 	color_rect.custom_minimum_size = Vector2(8, 50)
-	color_rect.color = staff.STAFF_COLORS.get(staff.staff_type, Color.WHITE)
+	color_rect.color = Staff.STAFF_COLORS.get(staff.staff_type, Color.WHITE)
 	row.add_child(color_rect)
 
 	# Spacer
@@ -161,11 +161,12 @@ func _on_hire_pressed() -> void:
 	var popup := PopupMenu.new()
 	popup.name = "HirePopup"
 
-	popup.add_item("Strażnik ($%d/dzień)" % Staff.BASE_SALARIES[Enums.StaffType.GUARD], Enums.StaffType.GUARD)
-	popup.add_item("Kucharz ($%d/dzień)" % Staff.BASE_SALARIES[Enums.StaffType.COOK], Enums.StaffType.COOK)
-	popup.add_item("Medyk ($%d/dzień)" % Staff.BASE_SALARIES[Enums.StaffType.MEDIC], Enums.StaffType.MEDIC)
-	popup.add_item("Psycholog ($%d/dzień)" % Staff.BASE_SALARIES[Enums.StaffType.PSYCHOLOGIST], Enums.StaffType.PSYCHOLOGIST)
-	popup.add_item("Sprzątacz ($%d/dzień)" % Staff.BASE_SALARIES[Enums.StaffType.JANITOR], Enums.StaffType.JANITOR)
+	# Pensje bazowe (z Constants)
+	popup.add_item("Strażnik ($%d/dzień)" % Constants.STAFF_SALARIES[Enums.StaffType.GUARD], Enums.StaffType.GUARD)
+	popup.add_item("Kucharz ($%d/dzień)" % Constants.STAFF_SALARIES[Enums.StaffType.COOK], Enums.StaffType.COOK)
+	popup.add_item("Medyk ($%d/dzień)" % Constants.STAFF_SALARIES[Enums.StaffType.MEDIC], Enums.StaffType.MEDIC)
+	popup.add_item("Psycholog ($%d/dzień)" % Constants.STAFF_SALARIES[Enums.StaffType.PSYCHOLOGIST], Enums.StaffType.PSYCHOLOGIST)
+	popup.add_item("Sprzątacz ($%d/dzień)" % Constants.STAFF_SALARIES[Enums.StaffType.JANITOR], Enums.StaffType.JANITOR)
 
 	popup.id_pressed.connect(_on_hire_type_selected)
 	add_child(popup)

@@ -56,17 +56,9 @@ const STAFF_COLORS: Dictionary = {
 	Enums.StaffType.WARDEN: Color(0.8, 0.6, 0.2)      # Złoty
 }
 
-# Pensje bazowe dla typów
-const BASE_SALARIES: Dictionary = {
-	Enums.StaffType.GUARD: 100,
-	Enums.StaffType.COOK: 80,
-	Enums.StaffType.MEDIC: 150,
-	Enums.StaffType.PSYCHOLOGIST: 180,
-	Enums.StaffType.JANITOR: 60,
-	Enums.StaffType.PRIEST: 70,
-	Enums.StaffType.SNIPER: 200,
-	Enums.StaffType.WARDEN: 300
-}
+# Pensje bazowe dla typów (pobierane z Constants)
+static func get_base_salary(type: Enums.StaffType) -> int:
+	return Constants.STAFF_SALARIES.get(type, 100)
 
 # =============================================================================
 # ZMIANY (SHIFTS)
@@ -106,7 +98,7 @@ func initialize(data: Dictionary) -> void:
 	morale = data.get("morale", 100.0)
 
 	# Ustaw pensję bazową
-	salary = BASE_SALARIES.get(staff_type, 100)
+	salary = Staff.get_base_salary(staff_type)
 
 	# Bonus za nocną zmianę
 	if shift == Enums.Shift.NIGHT:
@@ -357,7 +349,7 @@ func load_save_data(data: Dictionary) -> void:
 	var pos_arr: Array = data.get("position", [0, 0])
 	position = Vector2(pos_arr[0], pos_arr[1])
 
-	salary = BASE_SALARIES.get(staff_type, 100)
+	salary = Staff.get_base_salary(staff_type)
 	if shift == Enums.Shift.NIGHT:
 		salary = int(salary * 1.2)
 
