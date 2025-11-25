@@ -375,7 +375,7 @@ func _update_escape_movement(escape: EscapeAttemptData, delta: float) -> void:
 	var target_world := GridManager.grid_to_world(target_grid)
 
 	# Ruch w kierunku celu
-	var direction := (target_world - prisoner.global_position).normalized()
+	var direction: Vector2 = (target_world - prisoner.global_position).normalized()
 	var speed: float = prisoner.move_speed * ESCAPE_MOVE_SPEED_MULTIPLIER
 
 	prisoner.velocity = direction * speed

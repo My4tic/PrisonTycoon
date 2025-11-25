@@ -1,6 +1,9 @@
-[gd_scene load_steps=2 format=3 uid="uid://prisoner_scene"]
+[gd_scene load_steps=3 format=3 uid="uid://prisoner_scene"]
 
 [ext_resource type="Script" path="res://scripts/entities/prisoner.gd" id="1_script"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_collision"]
+radius = 14.0
 
 [node name="Prisoner" type="CharacterBody2D"]
 collision_layer = 16
@@ -22,6 +25,3 @@ path_desired_distance = 8.0
 target_desired_distance = 16.0
 avoidance_enabled = true
 radius = 16.0
-
-[sub_resource type="CircleShape2D" id="CircleShape2D_collision"]
-radius = 14.0
