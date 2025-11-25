@@ -1,0 +1,89 @@
+[gd_scene load_steps=2 format=3 uid="uid://prisoners_panel"]
+
+[ext_resource type="Script" path="res://scripts/ui/prisoners_panel.gd" id="1_script"]
+
+[node name="PrisonersPanel" type="PanelContainer"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -220.0
+offset_top = -280.0
+offset_right = 220.0
+offset_bottom = 280.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_script")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="TitleLabel" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "👥 Więźniowie"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="Header" type="VBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="CountLabel" type="Label" parent="VBoxContainer/Header"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Więźniowie: 0/0"
+horizontal_alignment = 1
+
+[node name="MoodLabel" type="Label" parent="VBoxContainer/Header"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Średni nastrój: 100%"
+horizontal_alignment = 1
+
+[node name="HSeparator2" type="HSeparator" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="FilterRow" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="FilterLabel" type="Label" parent="VBoxContainer/FilterRow"]
+layout_mode = 2
+text = "Filtr:"
+
+[node name="CategoryFilter" type="OptionButton" parent="VBoxContainer/FilterRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="PrisonersList" type="VBoxContainer" parent="VBoxContainer/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
+
+[node name="HSeparator3" type="HSeparator" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="ButtonsRow" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="SpawnButton" type="Button" parent="VBoxContainer/ButtonsRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 16
+text = "➕ Przyjmij więźnia"
+
+[node name="CloseButton" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Zamknij"

@@ -9,6 +9,7 @@ const BuildGhostScene := preload("res://scenes/buildings/build_ghost.tscn")
 const BuildMenuScene := preload("res://scenes/ui/build_menu.tscn")
 const BuildModeControllerScript := preload("res://scripts/controllers/build_mode_controller.gd")
 const EconomyPanelScene := preload("res://scenes/ui/economy_panel.tscn")
+const PrisonersPanelScene := preload("res://scenes/ui/prisoners_panel.tscn")
 
 # =============================================================================
 # REFERENCJE DO WĘZŁÓW
@@ -33,6 +34,9 @@ var build_menu = null  # BuildMenu
 
 # Economy Panel
 var economy_panel = null  # EconomyPanel
+
+# Prisoners Panel
+var prisoners_panel = null  # PrisonersPanel
 
 # Top Bar
 @onready var day_label: Label = $UI/SafeArea/HUD/TopBar/MarginContainer/HBoxContainer/TimeContainer/DayLabel
@@ -83,10 +87,12 @@ func _ready() -> void:
 	_setup_camera()
 	_setup_build_mode()
 	_setup_economy_panel()
+	_setup_prisoners_panel()
 
 	# Inicjalizuj managery
 	GridManager.initialize(tilemap)
 	NavigationManager.initialize(navigation_region)
+	PrisonerManager.set_container(prisoners_container)
 
 	# Rozpocznij nową grę (tymczasowo - docelowo z menu)
 	GameManager.start_new_game(Enums.GameMode.SANDBOX)
@@ -117,6 +123,10 @@ func _connect_signals() -> void:
 	Signals.game_speed_changed.connect(_on_game_speed_changed)
 	Signals.alert_triggered.connect(_on_alert_triggered)
 	Signals.alert_dismissed.connect(_on_alert_dismissed)
+	Signals.prisoner_arrived.connect(_on_prisoner_count_changed)
+	Signals.prisoner_released.connect(_on_prisoner_count_changed)
+	Signals.prisoner_escaped.connect(_on_prisoner_count_changed)
+	Signals.prisoner_died.connect(_on_prisoner_count_changed)
 
 
 func _connect_buttons() -> void:
@@ -164,6 +174,11 @@ func _setup_build_mode() -> void:
 func _setup_economy_panel() -> void:
 	economy_panel = EconomyPanelScene.instantiate()
 	panels_container.add_child(economy_panel)
+
+
+func _setup_prisoners_panel() -> void:
+	prisoners_panel = PrisonersPanelScene.instantiate()
+	panels_container.add_child(prisoners_panel)
 
 
 func _handle_camera_input(event: InputEvent) -> void:
@@ -323,8 +338,7 @@ func _update_capital_display() -> void:
 
 
 func _update_prisoner_count() -> void:
-	# TODO: Pobierz rzeczywistą liczbę więźniów
-	var current: int = 0
+	var current: int = PrisonerManager.get_prisoner_count()
 	var max_capacity: int = BuildingManager.get_total_capacity(Enums.BuildingType.CELL_SINGLE)
 	max_capacity += BuildingManager.get_total_capacity(Enums.BuildingType.CELL_DOUBLE)
 	max_capacity += BuildingManager.get_total_capacity(Enums.BuildingType.DORMITORY)
@@ -402,6 +416,10 @@ func _on_alert_dismissed(_alert_id: int) -> void:
 	_update_alert_badge()
 
 
+func _on_prisoner_count_changed(_arg1 = null, _arg2 = null) -> void:
+	_update_prisoner_count()
+
+
 # =============================================================================
 # OBSŁUGA PRZYCISKÓW PRĘDKOŚCI
 # =============================================================================
@@ -435,8 +453,8 @@ func _on_build_pressed() -> void:
 
 
 func _on_prisoners_pressed() -> void:
-	# TODO: Otwórz panel więźniów
-	print("Prisoners panel pressed")
+	if prisoners_panel:
+		prisoners_panel.toggle_panel()
 
 
 func _on_schedule_pressed() -> void:
