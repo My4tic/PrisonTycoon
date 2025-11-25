@@ -31,7 +31,32 @@ func initialize(region: NavigationRegion2D) -> void:
 
 	_navigation_polygon = NavigationPolygon.new()
 	_navigation_polygon.agent_radius = AGENT_RADIUS
+
+	# Utwórz podstawowy obszar nawigacji pokrywający całą mapę
+	_create_initial_navigation_mesh()
+
 	navigation_region.navigation_polygon = _navigation_polygon
+
+
+## Tworzy początkowy mesh nawigacji pokrywający całą mapę
+func _create_initial_navigation_mesh() -> void:
+	# Oblicz rozmiar mapy w pikselach
+	var map_width: float = Constants.GRID_WIDTH * Constants.TILE_SIZE
+	var map_height: float = Constants.GRID_HEIGHT * Constants.TILE_SIZE
+
+	# Margines od krawędzi
+	var margin: float = AGENT_RADIUS
+
+	# Utwórz prostokąt pokrywający całą mapę
+	var outline: PackedVector2Array = PackedVector2Array([
+		Vector2(margin, margin),
+		Vector2(map_width - margin, margin),
+		Vector2(map_width - margin, map_height - margin),
+		Vector2(margin, map_height - margin)
+	])
+
+	_navigation_polygon.add_outline(outline)
+	_navigation_polygon.make_polygons_from_outlines()
 
 
 # =============================================================================

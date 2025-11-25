@@ -35,7 +35,8 @@ func _init_default_schedules() -> void:
 	# Każda kategoria ma własny harmonogram
 	for category in Enums.SecurityCategory.values():
 		schedules[category] = _create_default_schedule(category)
-		current_activities[category] = Enums.ScheduleActivity.SLEEP
+		# Ustaw aktualną aktywność na podstawie bieżącej godziny
+		current_activities[category] = get_activity(category, GameManager.current_hour)
 
 
 func _create_default_schedule(category: Enums.SecurityCategory) -> Dictionary:
@@ -245,6 +246,23 @@ func get_activity_building_types(activity: Enums.ScheduleActivity) -> Array[Enum
 			types.append(Enums.BuildingType.DORMITORY)
 
 	return types
+
+
+# =============================================================================
+# POWIADAMIANIE NOWYCH ENCJI
+# =============================================================================
+## Wywołaj tę funkcję po utworzeniu więźnia, aby rozpoczął aktywność zgodną z harmonogramem
+func notify_entity_spawned(category: Enums.SecurityCategory) -> void:
+	var current_activity := get_current_activity(category)
+	# Emituj sygnał dla nowo utworzonej encji
+	Signals.schedule_activity_started.emit(category, current_activity)
+
+
+## Emituj sygnały dla wszystkich kategorii (do użycia np. przy starcie gry)
+func broadcast_current_activities() -> void:
+	for category in Enums.SecurityCategory.values():
+		var activity := get_current_activity(category)
+		Signals.schedule_activity_started.emit(category, activity)
 
 
 # =============================================================================

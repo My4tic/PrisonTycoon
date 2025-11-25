@@ -89,6 +89,10 @@ func spawn_prisoner(data: Dictionary = {}) -> int:
 	# Emituj sygnał
 	Signals.prisoner_arrived.emit(prisoner_id, prisoner.security_category)
 
+	# Powiadom więźnia o bieżącej aktywności harmonogramu
+	# Używamy call_deferred aby dać czas na połączenie sygnałów w _ready()
+	ScheduleManager.call_deferred("notify_entity_spawned", prisoner.security_category)
+
 	return prisoner_id
 
 

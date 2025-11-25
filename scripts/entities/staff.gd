@@ -80,10 +80,9 @@ func _ready() -> void:
 
 
 func _physics_process(delta: float) -> void:
-	# Ruch do celu
-	if is_on_duty and current_state == Enums.StaffState.PATROLLING:
-		_process_movement(delta)
-	elif current_state == Enums.StaffState.RESPONDING:
+	# Ruch do celu - tylko dla stanów które wymagają ruchu
+	# Uwaga: Stan PATROLLING jest obsługiwany przez podklasy (Guard)
+	if current_state == Enums.StaffState.RESPONDING:
 		_process_movement(delta)
 
 
