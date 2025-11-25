@@ -115,170 +115,170 @@ Prison Tycoon to mobilna gra symulacyjna typu management sim, gdzie gracz buduje
 
 ---
 
-## FAZA 3: EKONOMIA 🔄 NASTĘPNA
+## FAZA 3: EKONOMIA ✅ UKOŃCZONA
 **Czas: 1-2 tygodnie | Priorytet: KRYTYCZNY**
 
-### 3.1 EconomyManager (Singleton)
-- Kapitał (current money)
-- Tracking: revenue streams (źródła przychodów)
-- Tracking: expenses (kategorie wydatków)
-- Obliczanie daily balance
-- Timer: update ekonomii co 60s in-game (1 godzina)
+### 3.1 EconomyManager (Singleton) ✅
+- [x] Kapitał (current money)
+- [x] Tracking: revenue streams (źródła przychodów)
+- [x] Tracking: expenses (kategorie wydatków)
+- [x] Obliczanie daily balance
+- [x] Timer: update ekonomii co 60s in-game (1 godzina)
 
-### 3.2 Revenue system (przychody)
-- Subwencja za więźnia (zależna od kategorii bezpieczeństwa)
-- Praca więźniów (produkcja w warsztatach)
-- Kontrakty rządowe (milestone rewards)
-- Bonusy za bezpieczeństwo i zero incydentów
+### 3.2 Revenue system (przychody) ✅
+- [x] Subwencja za więźnia (zależna od kategorii bezpieczeństwa)
+- [x] Praca więźniów (produkcja w warsztatach)
+- [ ] Kontrakty rządowe (milestone rewards) - post-MVP
+- [ ] Bonusy za bezpieczeństwo i zero incydentów - post-MVP
 
-### 3.3 Expense system (wydatki)
-- Pensje personelu (daily per staff member)
-- Jedzenie (per prisoner per day)
-- Media: energia i woda (based on prison size)
-- Koszty budowy (one-time)
-- Naprawy po zniszczeniach
+### 3.3 Expense system (wydatki) ✅
+- [x] Pensje personelu (daily per staff member)
+- [x] Jedzenie (per prisoner per day)
+- [x] Media: energia i woda (based on prison size)
+- [x] Koszty budowy (one-time)
+- [ ] Naprawy po zniszczeniach - post-MVP
 
-### 3.4 Bankructwo i pożyczki
-- Detekcja: kapitał < 0 przez 7 dni
-- Emergency loan system ($20,000 + 10% interest)
-- Game over condition jeśli brak rozwiązań
+### 3.4 Bankructwo i pożyczki ✅
+- [x] Detekcja: kapitał < 0 przez 7 dni
+- [x] Emergency loan system ($20,000 + 10% interest)
+- [x] Game over condition jeśli brak rozwiązań
 
-### 3.5 Economy UI Panel
-- Szczegółowy breakdown przychodów i wydatków
-- Wykres 30-dniowy (trend finansowy)
-- Predykcja daily balance
-- Alerty przy niskim kapitale (<$5,000)
+### 3.5 Economy UI Panel ✅
+- [x] Szczegółowy breakdown przychodów i wydatków
+- [ ] Wykres 30-dniowy (trend finansowy) - post-MVP
+- [x] Predykcja daily balance
+- [x] Alerty przy niskim kapitale (<$5,000)
 
 ---
 
-## FAZA 4: WIĘŹNIOWIE - PODSTAWY
+## FAZA 4: WIĘŹNIOWIE - PODSTAWY ✅ UKOŃCZONA
 **Czas: 3-4 tygodnie | Priorytet: KRYTYCZNY**
 
-### 4.1 Prisoner Class (CharacterBody2D)
-- **Identyfikacja**: name, ID, age, crime, sentence length
-- **Kategoria**: low/medium/high/maximum security
-- **Needs**: hunger, sleep, hygiene, freedom, safety, entertainment (0-100%)
-- **Traits**: array cech charakteru (pracowity, agresywny, inteligentny, etc.)
-- **Status**: health, mood, current location, current activity
+### 4.1 Prisoner Class (CharacterBody2D) ✅
+- [x] **Identyfikacja**: name, ID, age, crime, sentence length
+- [x] **Kategoria**: low/medium/high/maximum security
+- [x] **Needs**: hunger, sleep, hygiene, freedom, safety, entertainment (0-100%)
+- [x] **Traits**: array cech charakteru (pracowity, agresywny, inteligentny, etc.)
+- [x] **Status**: health, mood, current location, current activity
 
-### 4.2 System potrzeb (Needs System)
-- Timer update co 1 sekundę dla wszystkich prisoners
-- Każda potrzeba degraduje według określonego rate
-- Satisfaction przez aktywności (np. eating → hunger +30%)
-- Thresholds: <30% warning, <10% crisis
-- Wpływ potrzeb na obliczanie mood
+### 4.2 System potrzeb (Needs System) ✅
+- [x] Timer update co 1 sekundę dla wszystkich prisoners
+- [x] Każda potrzeba degraduje według określonego rate
+- [x] Satisfaction przez aktywności (np. eating → hunger +30%)
+- [x] Thresholds: <30% warning, <10% crisis
+- [x] Wpływ potrzeb na obliczanie mood
 
-### 4.3 Prisoner AI - State Machine
-- **Stany**: Idle, Walking, Working, Eating, Sleeping, Recreation, Fighting, Escaping
-- **Przejścia schedule-driven**: według harmonogramu dnia
-- **Przejścia need-driven**: głód → szukaj jedzenia
-- **Przejścia event-driven**: alarm → powrót do celi
-- Decision logic: priorytetyzacja potrzeb
+### 4.3 Prisoner AI - State Machine ✅
+- [x] **Stany**: Idle, Walking, Working, Eating, Sleeping, Recreation, Fighting, Escaping
+- [x] **Przejścia schedule-driven**: według harmonogramu dnia
+- [x] **Przejścia need-driven**: głód → szukaj jedzenia
+- [x] **Przejścia event-driven**: alarm → powrót do celi
+- [x] Decision logic: priorytetyzacja potrzeb
 
-### 4.4 Pathfinding integration
-- NavigationAgent2D dla każdego więźnia
-- Target selection z ScheduleManager
-- Obstacle avoidance (inne postaci, ściany)
-- Obsługa zablokowanych drzwi
-- Queue system dla popularnych miejsc (kolejka do jedzenia)
+### 4.4 Pathfinding integration ✅
+- [x] NavigationAgent2D dla każdego więźnia
+- [x] Target selection z ScheduleManager
+- [x] Obstacle avoidance (inne postaci, ściany)
+- [ ] Obsługa zablokowanych drzwi - post-MVP
+- [ ] Queue system dla popularnych miejsc (kolejka do jedzenia) - post-MVP
 
-### 4.5 Generowanie więźniów
-- Proceduralne: losowe imię, wiek (18-65), wyrok, przestępstwo
-- Przypisanie kategorii (weighted random based on settings)
-- Przypisanie 1-3 losowych cech
-- Initial spawn location: reception building
-- Auto-przypisanie do wolnej celi
+### 4.5 Generowanie więźniów ✅
+- [x] Proceduralne: losowe imię, wiek (18-65), wyrok, przestępstwo
+- [x] Przypisanie kategorii (weighted random based on settings)
+- [x] Przypisanie 1-3 losowych cech
+- [x] Initial spawn location: reception building
+- [x] Auto-przypisanie do wolnej celi
 
-### 4.6 Kategorie zagrożenia (Security Categories)
-- **Low Security** (niebieski): subsidy $500, risk 10%
-- **Medium Security** (pomarańczowy): subsidy $800, risk 30%
-- **High Security** (czerwony): subsidy $1000, risk 60%
-- **Maximum Security** (czarny): subsidy $1200, risk 90%
-- Różne wymagania nadzoru i bezpieczeństwa
+### 4.6 Kategorie zagrożenia (Security Categories) ✅
+- [x] **Low Security** (niebieski): subsidy $500, risk 10%
+- [x] **Medium Security** (pomarańczowy): subsidy $800, risk 30%
+- [x] **High Security** (czerwony): subsidy $1000, risk 60%
+- [x] **Maximum Security** (czarny): subsidy $1200, risk 90%
+- [x] Różne wymagania nadzoru i bezpieczeństwa
 
 ---
 
-## FAZA 5: HARMONOGRAM
+## FAZA 5: HARMONOGRAM ✅ UKOŃCZONA
 **Czas: 1-2 tygodnie | Priorytet: WYSOKI**
 
-### 5.1 ScheduleManager (Singleton)
-- Oddzielny harmonogram dla każdej kategorii więźniów
-- Format: Dict[kategoria][godzina] = aktywność
-- Domyślne harmonogramy (loaded from JSON)
-- Custom rules i override (np. godzina policyjna)
-- Sygnały: schedule_changed, lockdown_started
+### 5.1 ScheduleManager (Singleton) ✅
+- [x] Oddzielny harmonogram dla każdej kategorii więźniów
+- [x] Format: Dict[kategoria][godzina] = aktywność
+- [x] Domyślne harmonogramy (w kodzie)
+- [x] Custom rules i override (np. godzina policyjna)
+- [x] Sygnały: schedule_changed, lockdown_started
 
-### 5.2 Typy aktywności
-- **Sleep**: lockdown w celach (22:00-06:00)
-- **Eating**: kierowanie do kantyny (07:00, 12:00, 18:00)
-- **Hygiene**: prysznice (06:30, 20:00)
-- **Work**: warsztaty produkcyjne (09:00-12:00, 13:00-17:00)
-- **Recreation**: podwórko, siłownia, biblioteka
-- **Free time**: cells open, socjalizacja
+### 5.2 Typy aktywności ✅
+- [x] **Sleep**: lockdown w celach (22:00-06:00)
+- [x] **Eating**: kierowanie do kantyny (07:00, 12:00, 18:00)
+- [x] **Hygiene**: prysznice (06:30, 20:00)
+- [x] **Work**: warsztaty produkcyjne (09:00-12:00, 13:00-17:00)
+- [x] **Recreation**: podwórko, siłownia, biblioteka
+- [x] **Free time**: cells open, socjalizacja
 
-### 5.3 Schedule UI Panel
-- Tabela: godzina | aktywność | miejsce
-- Dropdown wyboru kategorii więźniów
-- Edycja: kliknięcie → wybór aktywności z listy
-- Template system: kopiuj harmonogram między kategoriami
-- Reset do domyślnego
+### 5.3 Schedule UI Panel ✅
+- [x] Tabela: godzina | aktywność | miejsce
+- [x] Dropdown wyboru kategorii więźniów
+- [x] Edycja: kliknięcie → wybór aktywności z listy
+- [x] Template system: kopiuj harmonogram między kategoriami
+- [x] Reset do domyślnego
 
-### 5.4 Lockdown mode
-- Ręczna aktywacja lub automatyczna (podczas kryzysu)
-- Wszyscy więźniowie → natychmiastowy powrót do cel
-- Override całego harmonogramu
-- Mood penalty: -5% per dzień lockdownu
-- Zwiększone koszty (jedzenie na tacach +50%)
-- Unlock command
+### 5.4 Lockdown mode ✅
+- [x] Ręczna aktywacja lub automatyczna (podczas kryzysu)
+- [x] Wszyscy więźniowie → natychmiastowy powrót do cel
+- [x] Override całego harmonogramu
+- [ ] Mood penalty: -5% per dzień lockdownu - post-MVP
+- [ ] Zwiększone koszty (jedzenie na tacach +50%) - post-MVP
+- [x] Unlock command
 
 ---
 
-## FAZA 6: PERSONEL
+## FAZA 6: PERSONEL ✅ UKOŃCZONA
 **Czas: 2-3 tygodnie | Priorytet: WYSOKI**
 
-### 6.1 Staff Base Class
-- **Właściwości**: type, name, salary (daily), shift (1/2/3)
-- **Morale**: 0-100% (wpływa na efektywność)
-- **Skills/trainings**: array ukończonych szkoleń
-- **Current task**: patrol / respond / rest
+### 6.1 Staff Base Class ✅
+- [x] **Właściwości**: type, name, salary (daily), shift (1/2/3)
+- [x] **Morale**: 0-100% (wpływa na efektywność)
+- [x] **Skills/trainings**: array ukończonych szkoleń
+- [x] **Current task**: patrol / respond / rest
 
-### 6.2 Guard (Strażnik) - priorytet
-- **State machine**: Patrolling, Responding, Pacifying, Resting
-- Patrol routes (waypoints do obchodzenia)
-- Response to fights (automatyczny w zasięgu)
-- Area2D detection range (8 tiles)
-- Pacification mechanics (30s per 2 prisoners)
-- Upgrades: taser, walka wręcz, psy służbowe
+### 6.2 Guard (Strażnik) - priorytet ✅
+- [x] **State machine**: Patrolling, Responding, Pacifying, Resting
+- [x] Patrol routes (waypoints do obchodzenia)
+- [x] Response to fights (automatyczny w zasięgu)
+- [x] Area2D detection range (8 tiles)
+- [x] Pacification mechanics (30s per 2 prisoners)
+- [ ] Upgrades: taser, walka wręcz, psy służbowe - post-MVP
 
-### 6.3 Pozostałe typy personelu
-- **Medic**: healing w ambulatorium, range healing ability
-- **Cook**: produkcja w kuchni, meal quality influence
-- **Psychologist**: therapy sessions, reduce aggression trait
-- **Janitor**: sprzątanie, disease prevention
-- **Priest**: chapel services, mood boost
+### 6.3 Pozostałe typy personelu (struktura przygotowana) ✅
+- [x] **Medic**: healing w ambulatorium - podstawowa struktura
+- [x] **Cook**: produkcja w kuchni - podstawowa struktura
+- [x] **Psychologist**: therapy sessions - podstawowa struktura
+- [x] **Janitor**: sprzątanie - podstawowa struktura
+- [x] **Priest**: chapel services - podstawowa struktura
 
-### 6.4 Shift system (zmiany)
-- **3 zmiany**: 06:00-14:00, 14:00-22:00, 22:00-06:00
-- Automatyczna rotacja personelu
-- Night shift bonus (+20% do salary)
-- Fatigue tracking (zmęczenie wpływa na performance)
-- Rest requirement (posterunek)
+### 6.4 Shift system (zmiany) ✅
+- [x] **3 zmiany**: 06:00-14:00, 14:00-22:00, 22:00-06:00
+- [x] Automatyczna rotacja personelu
+- [x] Night shift bonus (+20% do salary)
+- [ ] Fatigue tracking (zmęczenie wpływa na performance) - post-MVP
+- [ ] Rest requirement (posterunek) - post-MVP
 
-### 6.5 Staff morale
-- **Czynniki obniżające**: nadgodziny, incydenty, śmierć kolegi, brak odpoczynku
-- **Skutki**: <50% efektywność -20%, <30% ryzyko odejścia, <10% sabotaż
-- **Poprawa**: posterunek wypoczynkowy, premie, szkolenia, stabilna sytuacja
+### 6.5 Staff morale ✅
+- [x] **Czynniki obniżające**: nadgodziny, incydenty, śmierć kolegi, brak odpoczynku
+- [x] **Skutki**: <50% efektywność -20%, <30% ryzyko odejścia
+- [ ] **Poprawa**: posterunek wypoczynkowy, premie, szkolenia - post-MVP
 
-### 6.6 Hiring UI
-- Panel rekrutacji per typ personelu
-- Lista current staff: imię, zmiana, morale bar
-- Przyciski: Hire / Fire
-- Cost preview (daily + monthly)
-- Training options (unlock po osiągnięciach)
+### 6.6 Hiring UI ✅
+- [x] Panel rekrutacji per typ personelu
+- [x] Lista current staff: imię, zmiana, morale bar
+- [x] Przyciski: Hire / Fire
+- [x] Cost preview (daily)
+- [ ] Training options (unlock po osiągnięciach) - post-MVP
 
 ---
 
-## FAZA 7: KRYZYSY - PODSTAWOWE
+## FAZA 7: KRYZYSY - PODSTAWOWE 🔄 NASTĘPNA
 **Czas: 2-3 tygodnie | Priorytet: WYSOKI**
 
 ### 7.1 EventManager (Singleton)
@@ -684,17 +684,17 @@ Prison Tycoon to mobilna gra symulacyjna typu management sim, gdzie gracz buduje
 
 ### MVP Definition (Minimum Viable Product)
 **Co MUSI być w pierwszym release (Fazy 0-7, częściowo 10, 12-14, 16):**
-1. ✅ Core systems (GameManager, TileMap, Navigation, Camera)
-2. ✅ System budowania (minimum 5 typów budynków)
-3. ✅ Ekonomia (przychody, wydatki, bankructwo)
-4. ✅ Więźniowie (3 kategorie, potrzeby, AI, pathfinding)
-5. ✅ Harmonogram (podstawowy, edytowalny)
-6. ✅ Personel (strażnicy, kucharze, medycy)
-7. ✅ Kryzysy podstawowe (bójki, ucieczki, alert system)
-8. ✅ UI (HUD, Build Menu, Prisoner Panel, Alerts - podstawowe)
-9. ✅ Kampania (minimum 5 rozdziałów z tutorialem)
-10. ✅ Grafika i audio (podstawowe, wystarczające do grania)
-11. ✅ Balancing i bug fixing (gra grywalna i fun)
+1. ✅ Core systems (GameManager, TileMap, Navigation, Camera) - UKOŃCZONE
+2. ✅ System budowania (minimum 5 typów budynków) - UKOŃCZONE (24 typy)
+3. ✅ Ekonomia (przychody, wydatki, bankructwo) - UKOŃCZONE
+4. ✅ Więźniowie (3 kategorie, potrzeby, AI, pathfinding) - UKOŃCZONE (4 kategorie)
+5. ✅ Harmonogram (podstawowy, edytowalny) - UKOŃCZONE
+6. ✅ Personel (strażnicy, kucharze, medycy) - UKOŃCZONE
+7. 🔄 Kryzysy podstawowe (bójki, ucieczki, alert system) - W TRAKCIE
+8. 🔄 UI (HUD, Build Menu, Prisoner Panel, Alerts - podstawowe) - W TRAKCIE
+9. ⏳ Kampania (minimum 5 rozdziałów z tutorialem) - DO ZROBIENIA
+10. ⏳ Grafika i audio (podstawowe, wystarczające do grania) - DO ZROBIENIA
+11. ⏳ Balancing i bug fixing (gra grywalna i fun) - DO ZROBIENIA
 
 ### Post-MVP (Nice-to-have, można dodać w updateach)
 - ⏳ Bunty i epidemia (zaawansowane kryzysy)
