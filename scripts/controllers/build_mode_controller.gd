@@ -100,13 +100,13 @@ func handle_input(event: InputEvent) -> bool:
 	if not is_active:
 		return false
 
-	# Obsługa ruchu myszy/dotyku
+	# Obsługa ruchu myszy
 	if event is InputEventMouseMotion:
-		var mouse_event := event as InputEventMouseMotion
-		_update_ghost_position(mouse_event.position)
+		var mouse_motion := event as InputEventMouseMotion
+		_update_ghost_position(mouse_motion.position)
 		return true
 
-	# Obsługa kliknięcia/tapnięcia
+	# Obsługa kliknięcia myszy
 	if event is InputEventMouseButton:
 		var mouse_event := event as InputEventMouseButton
 		if mouse_event.button_index == MOUSE_BUTTON_LEFT and mouse_event.pressed:
@@ -116,15 +116,17 @@ func handle_input(event: InputEvent) -> bool:
 			exit_build_mode()
 			return true
 
-	# Obsługa dotyku
+	# Obsługa dotyku (touch)
 	if event is InputEventScreenTouch:
 		var touch_event := event as InputEventScreenTouch
 		if touch_event.pressed:
 			_update_ghost_position(touch_event.position)
 		else:
+			# Zwolnienie palca = umieść budynek
 			_try_place_building(touch_event.position)
 		return true
 
+	# Obsługa przeciągania (touch drag)
 	if event is InputEventScreenDrag:
 		var drag_event := event as InputEventScreenDrag
 		_update_ghost_position(drag_event.position)
@@ -170,21 +172,30 @@ func _screen_to_world(screen_pos: Vector2) -> Vector2:
 
 func _try_place_building(screen_pos: Vector2) -> void:
 	if not build_ghost:
+		print("DEBUG: build_ghost is null")
 		return
 
 	# Aktualizuj pozycję ghost na wszelki wypadek
 	var world_pos: Vector2 = _screen_to_world(screen_pos)
 	build_ghost.update_position(world_pos)
 
+	print("DEBUG: Próba umieszczenia na pozycji grid: ", build_ghost.grid_position, " valid: ", build_ghost.is_valid)
+
 	# Próbuj umieścić budynek
 	if build_ghost.try_place():
 		# Sukces - utwórz wizualny budynek
+		var building_id = -1
+		if BuildingManager.buildings.size() > 0:
+			building_id = BuildingManager.buildings.keys().max()
+		print("DEBUG: Budynek umieszczony, ID: ", building_id)
 		_spawn_building_visual(
-			BuildingManager.buildings.keys().max(),
+			building_id,
 			selected_building_type,
 			build_ghost.grid_position,
 			build_ghost.grid_size
 		)
+	else:
+		print("DEBUG: Nie można umieścić - ", build_ghost.get_placement_error())
 
 
 func _spawn_building_visual(building_id: int, building_type: Enums.BuildingType, grid_pos: Vector2i, grid_size: Vector2i) -> void:
@@ -202,6 +213,11 @@ func _spawn_building_visual(building_id: int, building_type: Enums.BuildingType,
 # =============================================================================
 func _on_menu_building_selected(building_type: Enums.BuildingType) -> void:
 	select_building(building_type)
+	# Ukryj menu żeby można było umieścić budynek
+	if build_menu:
+		build_menu.hide_menu()
+	# Pokaż instrukcję
+	print("Kliknij na mapie aby umieścić budynek. Prawy przycisk/ESC aby anulować.")
 
 
 func _on_menu_closed() -> void:
@@ -209,8 +225,10 @@ func _on_menu_closed() -> void:
 
 
 func _on_building_placed(building_type: int, position: Vector2i, size: Vector2i) -> void:
-	# Budynek umieszczony pomyślnie
-	pass
+	# Budynek umieszczony pomyślnie - pokaż menu ponownie
+	print("Budynek umieszczony na pozycji: ", position)
+	if build_menu and is_active:
+		build_menu.show_menu()
 
 
 func _on_building_placement_failed(reason: String) -> void:
