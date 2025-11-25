@@ -52,6 +52,12 @@ var _touch_points: Dictionary = {}  # touch_index -> position
 var _initial_pinch_distance: float = 0.0
 var _initial_zoom: float = 1.0
 
+# Double-tap detection
+var _last_tap_time: float = 0.0
+var _last_tap_position: Vector2 = Vector2.ZERO
+const DOUBLE_TAP_TIME: float = 0.3  # Max czas między tapnięciami
+const DOUBLE_TAP_DISTANCE: float = 50.0  # Max odległość między tapnięciami
+
 # =============================================================================
 # FUNKCJE GODOT
 # =============================================================================
@@ -59,6 +65,12 @@ func _ready() -> void:
 	_connect_signals()
 	_connect_buttons()
 	_setup_camera()
+
+	# Inicjalizuj GridManager z TileMap
+	GridManager.initialize(tilemap)
+
+	# Inicjalizuj NavigationManager
+	NavigationManager.initialize(navigation_region)
 
 	# Rozpocznij nową grę (tymczasowo - docelowo z menu)
 	GameManager.start_new_game(Enums.GameMode.SANDBOX)
@@ -121,6 +133,9 @@ func _handle_camera_input(event: InputEvent) -> void:
 			_touch_points[touch_event.index] = touch_event.position
 			if _touch_points.size() == 2:
 				_start_pinch_zoom()
+			elif _touch_points.size() == 1:
+				# Sprawdź double-tap
+				_check_double_tap(touch_event.position)
 		else:
 			_touch_points.erase(touch_event.index)
 			if _touch_points.size() < 2:
@@ -145,9 +160,13 @@ func _handle_camera_input(event: InputEvent) -> void:
 		var mouse_event := event as InputEventMouseButton
 		if mouse_event.button_index == MOUSE_BUTTON_LEFT:
 			if mouse_event.pressed:
-				_is_dragging = true
-				_drag_start_pos = mouse_event.position
-				_camera_start_pos = camera.position
+				# Sprawdź double-click
+				if mouse_event.double_click:
+					_focus_camera_at(mouse_event.position)
+				else:
+					_is_dragging = true
+					_drag_start_pos = mouse_event.position
+					_camera_start_pos = camera.position
 			else:
 				_is_dragging = false
 		elif mouse_event.button_index == MOUSE_BUTTON_WHEEL_UP:
@@ -184,6 +203,52 @@ func _zoom_camera(delta: float) -> void:
 	var new_zoom: float = camera.zoom.x + delta
 	new_zoom = clampf(new_zoom, Constants.CAMERA_ZOOM_MIN, Constants.CAMERA_ZOOM_MAX)
 	camera.zoom = Vector2(new_zoom, new_zoom)
+	Signals.camera_zoom_changed.emit(new_zoom)
+
+
+func _check_double_tap(screen_position: Vector2) -> void:
+	var current_time: float = Time.get_ticks_msec() / 1000.0
+	var time_since_last: float = current_time - _last_tap_time
+	var distance_from_last: float = screen_position.distance_to(_last_tap_position)
+
+	if time_since_last < DOUBLE_TAP_TIME and distance_from_last < DOUBLE_TAP_DISTANCE:
+		# Double-tap wykryty!
+		_focus_camera_at(screen_position)
+		# Reset aby uniknąć triple-tap
+		_last_tap_time = 0.0
+		_last_tap_position = Vector2.ZERO
+	else:
+		# Zapisz dla następnego sprawdzenia
+		_last_tap_time = current_time
+		_last_tap_position = screen_position
+
+
+func _focus_camera_at(screen_position: Vector2) -> void:
+	# Konwertuj pozycję ekranu na pozycję świata
+	var viewport_size: Vector2 = get_viewport().get_visible_rect().size
+	var viewport_center: Vector2 = viewport_size / 2.0
+
+	# Oblicz offset od środka ekranu
+	var offset_from_center: Vector2 = screen_position - viewport_center
+
+	# Zastosuj zoom do offsetu
+	var world_offset: Vector2 = offset_from_center / camera.zoom
+
+	# Nowa pozycja kamery
+	var target_position: Vector2 = camera.position + world_offset
+
+	# Animuj przesunięcie kamery
+	var tween: Tween = create_tween()
+	tween.set_ease(Tween.EASE_OUT)
+	tween.set_trans(Tween.TRANS_QUAD)
+	tween.tween_property(camera, "position", target_position, 0.3)
+
+	# Zoom in przy double-tap (opcjonalnie)
+	var new_zoom: float = clampf(camera.zoom.x * 1.5, Constants.CAMERA_ZOOM_MIN, Constants.CAMERA_ZOOM_MAX)
+	tween.parallel().tween_property(camera, "zoom", Vector2(new_zoom, new_zoom), 0.3)
+
+	# Emituj sygnał
+	Signals.double_tap.emit(target_position)
 	Signals.camera_zoom_changed.emit(new_zoom)
 
 

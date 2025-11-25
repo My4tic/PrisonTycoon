@@ -7,62 +7,67 @@ Prison Tycoon to mobilna gra symulacyjna typu management sim, gdzie gracz buduje
 
 ---
 
-## FAZA 0: PRZYGOTOWANIE PROJEKTU
+## FAZA 0: PRZYGOTOWANIE PROJEKTU ✅ UKOŃCZONA
 **Czas: 1-2 dni | Priorytet: KRYTYCZNY**
 
-### Struktura katalogów
-- Utworzenie pełnej hierarchii folderów: assets/, scenes/, scripts/, data/
-- Podkatalogi: sprites, tilesets, audio, UI, buildings, entities
-- Organizacja zgodna z konwencją Godot
+### Struktura katalogów ✅
+- [x] Utworzenie pełnej hierarchii folderów: assets/, scenes/, scripts/, data/
+- [x] Podkatalogi: sprites, tilesets, audio, UI, buildings, entities
+- [x] Organizacja zgodna z konwencją Godot
 
-### Konfiguracja Godot
-- Ustawienie rozdzielczości i orientacji mobile (landscape/portrait)
-- Konfiguracja input map dla touch gestures
-- Setup autoload singletons (GameManager, EconomyManager, etc.)
-- Konfiguracja layerów collision i renderowania
+### Konfiguracja Godot ✅
+- [x] Ustawienie rozdzielczości i orientacji mobile (landscape/portrait)
+- [x] Konfiguracja input map dla touch gestures
+- [x] Setup autoload singletons (GameManager, EconomyManager, etc.)
+- [x] Konfiguracja layerów collision i renderowania
 
-### Dokumentacja techniczna
-- Diagramy architektury systemów
-- Lista sygnałów (events) między komponentami
-- Definicje enumów i stałych
-- Konwencje nazewnictwa
+### Dokumentacja techniczna ✅
+- [x] CLAUDE.md z architekturą systemów
+- [x] Lista sygnałów (events) między komponentami (signals.gd)
+- [x] Definicje enumów i stałych (enums.gd, constants.gd)
+- [x] Konwencje nazewnictwa
+
+### Dodatkowe (Mobile UI) ✅
+- [x] SafeAreaContainer dla notchy/gesture bar
+- [x] Responsywny theme z touch-friendly przyciskami
+- [x] Pinch-to-zoom i multi-touch pan
 
 ---
 
-## FAZA 1: FUNDAMENT - CORE SYSTEMS
+## FAZA 1: FUNDAMENT - CORE SYSTEMS ✅ UKOŃCZONA
 **Czas: 3-4 tygodnie | Priorytet: KRYTYCZNY**
 
-### 1.1 GameManager (Singleton)
-- Zarządzanie stanem gry (menu, gameplay, pauza)
-- System czasu in-game (dzień, godzina, minuty)
-- Prędkość gry (x1, x2, x4, pauza)
-- Save/Load system (JSON serialization)
-- Przełączanie scen i stanów
+### 1.1 GameManager (Singleton) ✅
+- [x] Zarządzanie stanem gry (menu, gameplay, pauza)
+- [x] System czasu in-game (dzień, godzina, minuty)
+- [x] Prędkość gry (x1, x2, x4, pauza)
+- [x] Save/Load system (JSON serialization) - SaveManager
+- [x] Przełączanie scen i stanów
 
-### 1.2 Sistema siatki i TileMap
-- TileMap dla ścian, podłóg, terenu
-- Grid-based positioning (wszystko na siatce 1x1)
-- Konwersja współrzędnych: world ↔ grid
-- Funkcje pomocnicze: is_cell_occupied(), get_cells_in_rect()
+### 1.2 Sistema siatki i TileMap ✅
+- [x] TileMap dla ścian, podłóg, terenu - GridManager z programowym TileSet
+- [x] Grid-based positioning (wszystko na siatce 1x1) - w BuildingManager
+- [x] Konwersja współrzędnych: world ↔ grid - w GameManager i GridManager
+- [x] Funkcje pomocnicze: is_cell_occupied(), get_cells_in_rect() - w BuildingManager
 
-### 1.3 Podstawowy system nawigacji
-- NavigationRegion2D dla całego więzienia
-- Dynamiczne aktualizowanie po budowie
-- Pathfinding A* dla ruchu więźniów i personelu
-- Obsługa przeszkód i drzwi
+### 1.3 Podstawowy system nawigacji ✅
+- [x] NavigationRegion2D dla całego więzienia - NavigationManager
+- [x] Dynamiczne aktualizowanie po budowie - mark_dirty() + debounced rebuild
+- [x] Pathfinding A* dla ruchu więźniów i personelu - get_path(), is_point_reachable()
+- [x] Obsługa przeszkód i drzwi - walkable cache w GridManager
 
-### 1.4 Kamera i sterowanie mobile
-- Camera2D z limitami obszaru
-- Touch gestures: drag (pan), pinch (zoom)
-- Zoom constraints (min/max levels)
-- Smooth interpolation
-- Double tap dla centrowania na obiekcie
+### 1.4 Kamera i sterowanie mobile ✅
+- [x] Camera2D z limitami obszaru
+- [x] Touch gestures: drag (pan), pinch (zoom)
+- [x] Zoom constraints (min/max levels)
+- [x] Smooth interpolation
+- [x] Double tap dla centrowania na obiekcie - z animacją i zoom-in
 
-### 1.5 Podstawowy HUD
-- Górny bar: logo, dzień, pause/speed, settings
-- Status bar: kapitał, liczba więźniów, reputacja
-- Dolne menu z ikonami kategorii
-- Placeholder dla alertów
+### 1.5 Podstawowy HUD ✅
+- [x] Górny bar: logo, dzień, pause/speed, settings
+- [x] Status bar: kapitał, liczba więźniów, reputacja
+- [x] Dolne menu z ikonami kategorii
+- [x] Placeholder dla alertów (AlertBadge)
 
 ---
 

@@ -63,6 +63,12 @@ signal building_placement_failed(reason: String)
 ## Emitowany gdy siatka nawigacji wymaga aktualizacji
 signal navigation_update_required()
 
+## Emitowany gdy ściana zostaje postawiona
+signal wall_placed(position: Vector2i, wall_type: int)
+
+## Emitowany gdy ściana zostaje usunięta
+signal wall_removed(position: Vector2i)
+
 # =============================================================================
 # WIĘŹNIOWIE
 # =============================================================================

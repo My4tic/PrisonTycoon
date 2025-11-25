@@ -29,6 +29,8 @@ BuildingManager="*res://scripts/autoload/building_manager.gd"
 ScheduleManager="*res://scripts/autoload/schedule_manager.gd"
 EventManager="*res://scripts/autoload/event_manager.gd"
 SaveManager="*res://scripts/autoload/save_manager.gd"
+GridManager="*res://scripts/autoload/grid_manager.gd"
+NavigationManager="*res://scripts/autoload/navigation_manager.gd"
 
 [display]
 
