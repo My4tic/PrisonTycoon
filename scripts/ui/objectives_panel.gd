@@ -13,14 +13,16 @@ extends PanelContainer
 
 var _collapsed: bool = false
 var _objective_labels: Dictionary = {}  # objective_id -> Label
+var _campaign_manager: Node = null
 
 
 # =============================================================================
 # INICJALIZACJA
 # =============================================================================
 func _ready() -> void:
+	_campaign_manager = get_node_or_null("/root/CampaignManager")
 	_connect_signals()
-	_update_display()
+	call_deferred("_update_display")
 	visible = false
 
 
@@ -39,12 +41,15 @@ func _connect_signals() -> void:
 # AKTUALIZACJA WYŚWIETLANIA
 # =============================================================================
 func _update_display() -> void:
-	if not CampaignManager.is_in_campaign():
+	if _campaign_manager == null:
+		_campaign_manager = get_node_or_null("/root/CampaignManager")
+
+	if _campaign_manager == null or not _campaign_manager.is_in_campaign():
 		visible = false
 		return
 
 	visible = true
-	var chapter = CampaignManager.current_chapter
+	var chapter = _campaign_manager.current_chapter
 
 	if chapter_label and chapter:
 		chapter_label.text = "Rozdział %d: %s" % [chapter.id + 1, chapter.title]
@@ -58,8 +63,11 @@ func _update_objectives() -> void:
 		child.queue_free()
 	_objective_labels.clear()
 
+	if _campaign_manager == null:
+		return
+
 	# Dodaj aktualne cele
-	var objectives: Array = CampaignManager.get_active_objectives()
+	var objectives: Array = _campaign_manager.get_active_objectives()
 	for obj in objectives:
 		if obj.is_hidden and not obj.is_completed:
 			continue
@@ -104,7 +112,10 @@ func _create_objective_item(obj) -> HBoxContainer:
 
 
 func _update_objective_label(objective_id: int) -> void:
-	var objectives: Array = CampaignManager.get_active_objectives()
+	if _campaign_manager == null:
+		return
+
+	var objectives: Array = _campaign_manager.get_active_objectives()
 	for obj in objectives:
 		if obj.id == objective_id:
 			if objective_id in _objective_labels:
@@ -167,7 +178,10 @@ func _on_collapse_pressed() -> void:
 # POMOCNICZE
 # =============================================================================
 func _get_objective_description(objective_id: int) -> String:
-	var objectives: Array = CampaignManager.get_active_objectives()
+	if _campaign_manager == null:
+		return ""
+
+	var objectives: Array = _campaign_manager.get_active_objectives()
 	for obj in objectives:
 		if obj.id == objective_id:
 			return obj.description

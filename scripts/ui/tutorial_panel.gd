@@ -10,12 +10,14 @@ extends PanelContainer
 @onready var continue_button: Button = $VBoxContainer/ContinueButton
 
 var _current_message_id: String = ""
+var _campaign_manager: Node = null
 
 
 # =============================================================================
 # INICJALIZACJA
 # =============================================================================
 func _ready() -> void:
+	_campaign_manager = get_node_or_null("/root/CampaignManager")
 	_connect_signals()
 	visible = false
 
@@ -33,10 +35,16 @@ func _connect_signals() -> void:
 func _on_tutorial_message(message_id: String) -> void:
 	_current_message_id = message_id
 
+	if _campaign_manager == null:
+		_campaign_manager = get_node_or_null("/root/CampaignManager")
+
+	if _campaign_manager == null:
+		return
+
 	# Pobierz aktualny krok tutoriala
-	var current_chapter = CampaignManager.current_chapter
-	if current_chapter and CampaignManager.tutorial_active:
-		var step_index: int = CampaignManager.current_tutorial_step
+	var current_chapter = _campaign_manager.current_chapter
+	if current_chapter and _campaign_manager.tutorial_active:
+		var step_index: int = _campaign_manager.current_tutorial_step
 		var steps: Array = current_chapter.tutorial_steps
 
 		if step_index < steps.size():
@@ -59,7 +67,8 @@ func _on_continue_pressed() -> void:
 	GameManager.unpause_game()
 
 	# Przejdź do następnego kroku
-	CampaignManager.advance_tutorial()
+	if _campaign_manager:
+		_campaign_manager.advance_tutorial()
 
 
 # =============================================================================

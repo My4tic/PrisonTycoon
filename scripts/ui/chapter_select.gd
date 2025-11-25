@@ -24,15 +24,19 @@ const STATUS_ICONS := {
 	"completed": "✅"
 }
 
+var _campaign_manager: Node = null
+
 
 # =============================================================================
 # INICJALIZACJA
 # =============================================================================
 func _ready() -> void:
+	_campaign_manager = get_node_or_null("/root/CampaignManager")
+
 	if back_button:
 		back_button.pressed.connect(_on_back_pressed)
 
-	_populate_chapters()
+	call_deferred("_populate_chapters")
 	visible = false
 
 
@@ -41,8 +45,14 @@ func _populate_chapters() -> void:
 	for child in chapters_container.get_children():
 		child.queue_free()
 
+	if _campaign_manager == null:
+		_campaign_manager = get_node_or_null("/root/CampaignManager")
+
+	if _campaign_manager == null:
+		return
+
 	# Stwórz przycisk dla każdego rozdziału
-	var chapters: Array = CampaignManager.get_all_chapters()
+	var chapters: Array = _campaign_manager.get_all_chapters()
 	for chapter in chapters:
 		var chapter_button := _create_chapter_button(chapter)
 		chapters_container.add_child(chapter_button)
