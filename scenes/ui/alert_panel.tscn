@@ -1,0 +1,66 @@
+[gd_scene load_steps=2 format=3 uid="uid://dvk8qr3cnhs6j"]
+
+[ext_resource type="Script" path="res://scripts/ui/alert_panel.gd" id="1_alert"]
+
+[node name="AlertPanel" type="PanelContainer"]
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 0.0
+offset_left = -420
+offset_top = 60
+offset_right = -20
+offset_bottom = 500
+grow_horizontal = 0
+script = ExtResource("1_alert")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="Header" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="TitleLabel" type="Label" parent="VBoxContainer/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "📢 ALERTY"
+theme_override_font_sizes/font_size = 18
+
+[node name="CountLabel" type="Label" parent="VBoxContainer/Header"]
+layout_mode = 2
+text = "Alerty: 0"
+theme_override_font_sizes/font_size = 14
+
+[node name="ClearAllButton" type="Button" parent="VBoxContainer/Header"]
+layout_mode = 2
+text = "Wyczyść"
+
+[node name="HSeparator" type="HSeparator" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="HeaderRow" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="FilterLabel" type="Label" parent="VBoxContainer/HeaderRow"]
+layout_mode = 2
+text = "Filtr:"
+
+[node name="FilterDropdown" type="OptionButton" parent="VBoxContainer/HeaderRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="AlertsContainer" type="VBoxContainer" parent="VBoxContainer/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="HSeparator2" type="HSeparator" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="CloseButton" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+text = "Zamknij"

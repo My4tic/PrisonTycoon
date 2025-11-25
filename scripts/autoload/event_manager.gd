@@ -236,27 +236,98 @@ func _create_alert_for_event(event: EventData) -> void:
 # SPRAWDZANIE WARUNKÓW TRIGGERÓW
 # =============================================================================
 func _check_event_triggers() -> void:
-	# TODO: Implementacja sprawdzania warunków dla różnych eventów
-	# Na razie placeholder - będzie rozbudowane w późniejszych fazach
-	pass
+	# Sprawdź warunki dla różnych kryzysów
+	_check_riot_conditions()
+	_check_snitch_reports()
 
 
 func _check_fight_conditions() -> void:
-	# Sprawdź czy są więźniowie z niskimi potrzebami lub agresywni
-	# Jeśli tak, może rozpocząć się bójka
+	# Delegowane do FightSystem - sprawdza automatycznie
 	pass
 
 
 func _check_escape_conditions() -> void:
-	# Sprawdź czy są więźniowie z bardzo niską potrzebą wolności
-	# i czy mają możliwość ucieczki
+	# Delegowane do EscapeSystem - sprawdza automatycznie
 	pass
 
 
 func _check_riot_conditions() -> void:
-	# Sprawdź czy nastrój więźniów jest poniżej progu
-	# i czy jest wystarczająco dużo niezadowolonych
-	pass
+	# Sprawdź czy nastrój więźniów jest poniżej progu buntucar
+	var avg_mood: float = PrisonerManager.get_average_mood()
+	var prisoner_count: int = PrisonerManager.get_prisoner_count()
+
+	if prisoner_count < 5:
+		return  # Za mało więźniów na bunt
+
+	if avg_mood > Constants.RIOT_MOOD_THRESHOLD:
+		return  # Nastrój zbyt wysoki
+
+	# Sprawdź procent niezadowolonych
+	var unhappy_count: int = 0
+	for prisoner in PrisonerManager.get_all_prisoners():
+		if prisoner and is_instance_valid(prisoner):
+			if prisoner.get_mood() < Constants.RIOT_MOOD_THRESHOLD:
+				unhappy_count += 1
+
+	var unhappy_percent: float = (float(unhappy_count) / prisoner_count) * 100.0
+
+	if unhappy_percent < Constants.RIOT_PARTICIPANT_PERCENT:
+		return  # Za mało niezadowolonych
+
+	# Szansa na bunt
+	var riot_chance: float = 0.01 * (unhappy_percent / 100.0)  # 1% bazowo * procent niezadowolonych
+
+	if randf() < riot_chance:
+		_start_riot(unhappy_count)
+
+
+func _start_riot(participant_count: int) -> void:
+	# Sprawdź czy bunt już trwa
+	for event in active_events:
+		if event.type == Enums.EventType.RIOT:
+			return
+
+	# Zbierz uczestników
+	var participants: Array[int] = []
+	for prisoner in PrisonerManager.get_all_prisoners():
+		if prisoner and is_instance_valid(prisoner):
+			if prisoner.get_mood() < Constants.RIOT_MOOD_THRESHOLD:
+				participants.append(prisoner.prisoner_id)
+				# Zmień stan więźnia na walczącego
+				prisoner.change_state(Enums.PrisonerState.FIGHTING)
+
+	if participants.size() < 5:
+		return
+
+	# Znajdź centrum buntucar
+	var center := Vector2i(Constants.GRID_WIDTH / 2, Constants.GRID_HEIGHT / 2)
+
+	# Utwórz event
+	create_event(Enums.EventType.RIOT, center, participants)
+
+	# Drastyczne zwiększenie napięcia
+	add_tension(50.0)
+
+	# Automatyczny lockdown
+	ScheduleManager.enable_lockdown("riot")
+
+
+func _check_snitch_reports() -> void:
+	# Sprawdź donosy od kapusiów (jeśli ContrabandSystem istnieje)
+	if not is_instance_valid(ContrabandSystem):
+		return
+
+	var reports: Array = ContrabandSystem.check_for_snitch_reports()
+
+	for report in reports:
+		# Przeszukaj wskazanego więźnia
+		var found := ContrabandSystem.search_prisoner(report["target_id"], "manual")
+
+		if not found.is_empty():
+			# Nagroda dla kapusia - poprawa nastroju
+			var snitch = PrisonerManager.get_prisoner(report["snitch_id"])
+			if snitch:
+				snitch.satisfy_need(Enums.PrisonerNeed.SAFETY, 10.0)
 
 
 # =============================================================================

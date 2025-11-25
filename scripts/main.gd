@@ -12,6 +12,7 @@ const EconomyPanelScene := preload("res://scenes/ui/economy_panel.tscn")
 const PrisonersPanelScene := preload("res://scenes/ui/prisoners_panel.tscn")
 const SchedulePanelScene := preload("res://scenes/ui/schedule_panel.tscn")
 const StaffPanelScene := preload("res://scenes/ui/staff_panel.tscn")
+const AlertPanelScene := preload("res://scenes/ui/alert_panel.tscn")
 
 # =============================================================================
 # REFERENCJE DO WĘZŁÓW
@@ -45,6 +46,9 @@ var schedule_panel = null  # SchedulePanel
 
 # Staff Panel
 var staff_panel = null  # StaffPanel
+
+# Alert Panel
+var alert_panel = null  # AlertPanel
 
 # Top Bar
 @onready var day_label: Label = $UI/SafeArea/HUD/TopBar/MarginContainer/HBoxContainer/TimeContainer/DayLabel
@@ -98,6 +102,7 @@ func _ready() -> void:
 	_setup_prisoners_panel()
 	_setup_schedule_panel()
 	_setup_staff_panel()
+	_setup_alert_panel()
 
 	# Inicjalizuj managery
 	GridManager.initialize(tilemap)
@@ -200,6 +205,11 @@ func _setup_schedule_panel() -> void:
 func _setup_staff_panel() -> void:
 	staff_panel = StaffPanelScene.instantiate()
 	panels_container.add_child(staff_panel)
+
+
+func _setup_alert_panel() -> void:
+	alert_panel = AlertPanelScene.instantiate()
+	panels_container.add_child(alert_panel)
 
 
 func _handle_camera_input(event: InputEvent) -> void:
@@ -495,5 +505,5 @@ func _on_stats_pressed() -> void:
 
 
 func _on_alerts_pressed() -> void:
-	# TODO: Otwórz panel alertów
-	print("Alerts panel pressed")
+	if alert_panel:
+		alert_panel.toggle_panel()

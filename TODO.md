@@ -278,45 +278,49 @@ Prison Tycoon to mobilna gra symulacyjna typu management sim, gdzie gracz buduje
 
 ---
 
-## FAZA 7: KRYZYSY - PODSTAWOWE 🔄 NASTĘPNA
+## FAZA 7: KRYZYSY - PODSTAWOWE ✅ UKOŃCZONA
 **Czas: 2-3 tygodnie | Priorytet: WYSOKI**
 
-### 7.1 EventManager (Singleton)
-- Kolejka aktywnych eventów
-- Checking trigger conditions co 5 sekund
-- Alert system integration
-- Crisis state management (normal/crisis/emergency)
-- Event resolution tracking
+### 7.1 EventManager (Singleton) ✅
+- [x] Kolejka aktywnych eventów
+- [x] Checking trigger conditions co 5 sekund
+- [x] Alert system integration
+- [x] Crisis state management (normal/crisis/emergency)
+- [x] Event resolution tracking
 
-### 7.2 Bójki (Fights)
-- **Trigger conditions**: need <30% (safety/hunger), gang rivalry, trait "agresywny" + brak guard
-- **Mechanika**: Fighting state, damage 10 HP/10s, escalation (inni dołączają w zasięgu)
-- **Guard response**: auto w zasięgu 8 tiles, pacification 30s/2 prisoners
-- **Aftermath**: ranni → ambulatorium, agresorzy → izolatka (3-7 dni)
-- **Sygnały**: fight_started, fight_ended, prisoner_injured
+### 7.2 Bójki (Fights) ✅
+- [x] **FightSystem** - Autoload singleton zarządzający bójkami
+- [x] **Trigger conditions**: need <30% (safety/hunger), trait "agresywny" + brak guard
+- [x] **Mechanika**: Fighting state, damage 2 HP/s, escalation (inni dołączają w zasięgu 3 tiles)
+- [x] **Guard response**: auto w zasięgu 8 tiles, pacification 30s/2 prisoners
+- [x] **Aftermath**: ranni → ambulatorium (po health <50%), agresorzy → izolatka
+- [x] **Sygnały**: fight_started, fight_ended, prisoner_pacified
 
-### 7.3 Ucieczki (Escapes)
-- **Fazy**: Planowanie (ukryte, 3-7 dni) → Wykonanie → Pościg
-- **Trigger**: need freedom <10% + trait "zbieg" + opportunity
-- **Planning indicators**: suspicious behavior (dla gracza)
-- **Breach attempt**: przebicie ściany (zależy od typu), tunel, drzwi
-- **Alarm**: automatyczny trigger, guards response
-- **Snajper**: 95% skuteczność jeśli w zasięgu
-- **Skutki**: jeśli uciekł = -$5,000, -0.5 gwiazdki, utrata subwencji za więźnia
+### 7.3 Ucieczki (Escapes) ✅
+- [x] **EscapeSystem** - Autoload singleton zarządzający ucieczkami
+- [x] **Trigger**: need freedom <30% + trait "zbieg" + niska obecność strażników
+- [x] **Route calculation**: wybór najlepszego punktu ucieczki (krawędź mapy)
+- [x] **Detection system**: strażnicy wykrywają uciekających w zasięgu
+- [x] **Guard chase**: automatyczne wysyłanie strażników do pościgu
+- [x] **Skutki ucieczki**: -$5,000 kara, usunięcie więźnia z gry
+- [x] **Inteligentni więźniowie**: omijają patrolowane obszary
 
-### 7.4 Kontrabanda
-- **Mechanika**: 10% szansa/dzień/więzień na zdobycie
-- **Typy**: telefon, narkotyki, nóż, alkohol, narzędzia (do ucieczki)
-- **Detection methods**: detektor metalu 80%, rewizja 60%, psy 70%, kamery 40%
-- **Skutki posiadania**: nóż +100% ryzyko zabójstwa, narzędzia +200% escape chance
-- **Zapobieganie**: regularne rewizje, detektory przy wejściach, kamery, psy
+### 7.4 Kontrabanda ✅
+- [x] **ContrabandSystem** - Autoload singleton zarządzający kontrabandą
+- [x] **Mechanika**: 5% szansa/interwał/więzień na zdobycie
+- [x] **Typy**: telefon, narkotyki, nóż, alkohol, narzędzia (do ucieczki)
+- [x] **Efekty na potrzeby**: telefon → entertainment, nóż → safety, etc.
+- [x] **Detection methods**: manual search 60%, metal detector 80%, dog 90% (narkotyki)
+- [x] **Snitch system**: kapusie donoszą na innych więźniów
+- [x] **Zapobieganie**: regularne rewizje, eventy wykrycia
 
-### 7.5 Alert System UI
-- Powiadomienia push (w interfejsie gry)
-- **4 priorytety**: krytyczny (czerwony), ważny (pomarańczowy), info (żółty), pozytywny (zielony)
-- Quick actions: Zobacz (focus camera), Rozwiąż (szybka akcja), OK (dismiss)
-- Lista aktywnych alertów w panel
-- Auto-focus kamery na incydent
+### 7.5 Alert System UI ✅
+- [x] **AlertPanel** - Panel UI z listą alertów
+- [x] **4 priorytety**: krytyczny (czerwony), ważny (pomarańczowy), info (żółty), pozytywny (zielony)
+- [x] **Filtrowanie**: dropdown do filtrowania alertów po priorytecie
+- [x] Quick actions: Zobacz (focus camera), Zamknij (dismiss)
+- [x] Lista aktywnych alertów z timestampem
+- [x] Auto-show panel przy alertach krytycznych
 
 ---
 
@@ -690,8 +694,8 @@ Prison Tycoon to mobilna gra symulacyjna typu management sim, gdzie gracz buduje
 4. ✅ Więźniowie (3 kategorie, potrzeby, AI, pathfinding) - UKOŃCZONE (4 kategorie)
 5. ✅ Harmonogram (podstawowy, edytowalny) - UKOŃCZONE
 6. ✅ Personel (strażnicy, kucharze, medycy) - UKOŃCZONE
-7. 🔄 Kryzysy podstawowe (bójki, ucieczki, alert system) - W TRAKCIE
-8. 🔄 UI (HUD, Build Menu, Prisoner Panel, Alerts - podstawowe) - W TRAKCIE
+7. ✅ Kryzysy podstawowe (bójki, ucieczki, alert system) - UKOŃCZONE
+8. ✅ UI (HUD, Build Menu, Prisoner Panel, Alerts - podstawowe) - UKOŃCZONE
 9. ⏳ Kampania (minimum 5 rozdziałów z tutorialem) - DO ZROBIENIA
 10. ⏳ Grafika i audio (podstawowe, wystarczające do grania) - DO ZROBIENIA
 11. ⏳ Balancing i bug fixing (gra grywalna i fun) - DO ZROBIENIA
