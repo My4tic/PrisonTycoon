@@ -123,6 +123,9 @@ func initialize(map: TileMap) -> void:
 	# Upewnij się że mamy wystarczająco warstw
 	_ensure_layers()
 
+	# Narysuj początkowy teren
+	_setup_initial_terrain()
+
 
 func _create_tile_source(source_id: int, colors: Array) -> void:
 	var tile_count: int = colors.size()
@@ -178,8 +181,15 @@ func _ensure_layers() -> void:
 func _setup_initial_terrain() -> void:
 	if tilemap == null:
 		return
-	# Teren będzie dodawany w miarę potrzeby (np. przy budowaniu)
-	# Nie wypełniamy całej mapy na starcie ze względów wydajnościowych
+	# Wypełnij całą mapę trawą jako bazowy teren
+	# Używamy małego obszaru startowego dla wydajności
+	var start_size: int = 30  # 30x30 tiles na start
+	var start_x: int = (Constants.GRID_WIDTH - start_size) / 2
+	var start_y: int = (Constants.GRID_HEIGHT - start_size) / 2
+
+	for x in range(start_size):
+		for y in range(start_size):
+			set_terrain(Vector2i(start_x + x, start_y + y), TERRAIN_GRASS)
 
 
 # =============================================================================
