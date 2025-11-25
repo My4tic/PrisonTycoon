@@ -363,25 +363,51 @@ func _on_state_exit(_state: Enums.PrisonerState) -> void:
 	pass  # Cleanup jeśli potrzebny
 
 
-func _process_ai(_delta: float) -> void:
-	# Proste AI - reaguj na krytyczne potrzeby
+# Timer do losowego chodzenia w stanie IDLE
+var _idle_wander_timer: float = 0.0
+const IDLE_WANDER_INTERVAL: float = 5.0  # Co 5 sekund sprawdź czy iść gdzie indziej
+
+
+func _process_ai(delta: float) -> void:
+	# Proste AI - reaguj na krytyczne potrzeby i losowo chodź
 	if current_state == Enums.PrisonerState.IDLE:
+		# Sprawdź krytyczne potrzeby
 		var critical := get_critical_needs()
 		if critical.size() > 0:
 			_handle_critical_need(critical[0])
+			return
+
+		# Losowe chodzenie w stanie IDLE
+		_idle_wander_timer += delta
+		if _idle_wander_timer >= IDLE_WANDER_INTERVAL:
+			_idle_wander_timer = 0.0
+			# 50% szans na pójście gdzieś
+			if randf() < 0.5:
+				_wander_randomly()
 
 
 func _handle_critical_need(need_type: Enums.PrisonerNeed) -> void:
-	# TODO: Znajdź budynek zaspokajający potrzebę i idź tam
 	match need_type:
 		Enums.PrisonerNeed.HUNGER:
 			# Szukaj kantyny
-			pass
+			_navigate_to_activity_building(Enums.BuildingType.CANTEEN)
 		Enums.PrisonerNeed.SLEEP:
 			# Idź do celi
 			if assigned_cell_id >= 0:
 				_navigate_to_building(assigned_cell_id)
 				change_state(Enums.PrisonerState.WALKING)
+			else:
+				_navigate_to_any_cell_or_wander()
+		Enums.PrisonerNeed.HYGIENE:
+			_navigate_to_activity_building(Enums.BuildingType.SHOWER_ROOM)
+		Enums.PrisonerNeed.ENTERTAINMENT:
+			_navigate_to_random_recreation_building()
+		Enums.PrisonerNeed.FREEDOM:
+			# Idź na podwórko
+			_navigate_to_activity_building(Enums.BuildingType.YARD)
+		_:
+			# Dla innych potrzeb - chodź losowo
+			_wander_randomly()
 
 
 # =============================================================================
@@ -431,6 +457,11 @@ func _on_navigation_finished() -> void:
 		var building = BuildingManager.get_building(current_target_building_id)
 		if building:
 			_enter_building(building)
+		else:
+			change_state(Enums.PrisonerState.IDLE)
+	else:
+		# Dotarł do losowego punktu - wróć do IDLE
+		change_state(Enums.PrisonerState.IDLE)
 
 
 func _enter_building(building) -> void:
@@ -500,6 +531,9 @@ func _follow_schedule_activity(activity: Enums.ScheduleActivity) -> void:
 			if assigned_cell_id >= 0:
 				_navigate_to_building(assigned_cell_id)
 				change_state(Enums.PrisonerState.WALKING)
+			else:
+				# Brak przypisanej celi - szukaj wolnej celi lub chodź losowo
+				_navigate_to_any_cell_or_wander()
 		Enums.ScheduleActivity.EATING:
 			_navigate_to_activity_building(Enums.BuildingType.CANTEEN)
 		Enums.ScheduleActivity.HYGIENE:
@@ -513,10 +547,14 @@ func _follow_schedule_activity(activity: Enums.ScheduleActivity) -> void:
 		Enums.ScheduleActivity.RECREATION:
 			_navigate_to_random_recreation_building()
 		Enums.ScheduleActivity.FREE_TIME:
-			# Wolny czas - zostań gdzie jesteś lub idź losowo
-			change_state(Enums.PrisonerState.IDLE)
+			# Wolny czas - idź losowo
+			_wander_randomly()
 		Enums.ScheduleActivity.LOCKDOWN:
-			change_state(Enums.PrisonerState.LOCKDOWN)
+			if assigned_cell_id >= 0:
+				_navigate_to_building(assigned_cell_id)
+				change_state(Enums.PrisonerState.WALKING)
+			else:
+				change_state(Enums.PrisonerState.LOCKDOWN)
 
 
 func _navigate_to_activity_building(building_type: Enums.BuildingType) -> void:
@@ -527,8 +565,8 @@ func _navigate_to_activity_building(building_type: Enums.BuildingType) -> void:
 		_navigate_to_building(building.id)
 		change_state(Enums.PrisonerState.WALKING)
 	else:
-		# Brak budynku - zostań w miejscu
-		change_state(Enums.PrisonerState.IDLE)
+		# Brak budynku - chodź losowo
+		_wander_randomly()
 
 
 func _navigate_to_random_work_building() -> void:
@@ -568,10 +606,60 @@ func _navigate_to_random_recreation_building() -> void:
 			change_state(Enums.PrisonerState.WALKING)
 			return
 
-	# Brak budynków rekreacyjnych - idź do celi
+	# Brak budynków rekreacyjnych - idź do celi lub chodź losowo
 	if assigned_cell_id >= 0:
 		_navigate_to_building(assigned_cell_id)
 		change_state(Enums.PrisonerState.WALKING)
+	else:
+		_wander_randomly()
+
+
+func _navigate_to_any_cell_or_wander() -> void:
+	# Szukaj dowolnej celi
+	var cell_types: Array[Enums.BuildingType] = [
+		Enums.BuildingType.CELL_SINGLE,
+		Enums.BuildingType.CELL_DOUBLE,
+		Enums.BuildingType.DORMITORY
+	]
+
+	for cell_type in cell_types:
+		var cells := BuildingManager.get_buildings_by_type(cell_type)
+		if cells.size() > 0:
+			var cell = cells[randi() % cells.size()]
+			_navigate_to_building(cell.id)
+			change_state(Enums.PrisonerState.WALKING)
+			return
+
+	# Brak cel - chodź losowo
+	_wander_randomly()
+
+
+func _wander_randomly() -> void:
+	# Wybierz losowy punkt w promieniu 10 tile'ów od aktualnej pozycji
+	var current_grid := GridManager.world_to_grid(global_position)
+	var wander_radius: int = 10
+
+	# Reset celu budynku - to jest losowe chodzenie
+	current_target_building_id = -1
+
+	# Próbuj kilka razy znaleźć prawidłowy cel
+	for _attempt in range(5):
+		var offset := Vector2i(
+			randi_range(-wander_radius, wander_radius),
+			randi_range(-wander_radius, wander_radius)
+		)
+		var target_grid := current_grid + offset
+
+		# Sprawdź czy cel jest w granicach mapy
+		if GridManager.is_valid_cell(target_grid):
+			target_position = GridManager.grid_to_world(target_grid)
+			if nav_agent:
+				nav_agent.target_position = target_position
+			change_state(Enums.PrisonerState.WALKING)
+			return
+
+	# Nie udało się - zostań w miejscu
+	change_state(Enums.PrisonerState.IDLE)
 
 
 func _on_lockdown_started(_reason: String) -> void:

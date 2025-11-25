@@ -697,8 +697,37 @@ Prison Tycoon to mobilna gra symulacyjna typu management sim, gdzie gracz buduje
 7. ✅ Kryzysy podstawowe (bójki, ucieczki, alert system) - UKOŃCZONE
 8. ✅ UI (HUD, Build Menu, Prisoner Panel, Alerts - podstawowe) - UKOŃCZONE
 9. ⏳ Kampania (minimum 5 rozdziałów z tutorialem) - DO ZROBIENIA
-10. ⏳ Grafika i audio (podstawowe, wystarczające do grania) - DO ZROBIENIA
-11. ⏳ Balancing i bug fixing (gra grywalna i fun) - DO ZROBIENIA
+10. ⏳ Grafika i audio (podstawowe, wystarczające do grania) - CZĘŚCIOWO (placeholder sprites)
+11. ⏳ Balancing i bug fixing (gra grywalna i fun) - W TRAKCIE
+
+### Aktualny status (Listopad 2025):
+**UKOŃCZONE FAZY: 0, 1, 2, 3, 4, 5, 6, 7**
+- Wszystkie core systemy działają
+- Więźniowie i strażnicy poruszają się i reagują na harmonogram
+- System kryzysów (bójki, ucieczki, kontrabanda) aktywny
+- UI podstawowe kompletne
+
+**DO ZROBIENIA dla MVP:**
+1. **Faza 12.1 - Kampania** (priorytet WYSOKI)
+   - [ ] 5-10 rozdziałów z progresywną trudnością
+   - [ ] Tutorial w rozdziałach 1-3
+   - [ ] System celów i warunków zwycięstwa
+
+2. **Faza 13 - Grafika** (priorytet ŚREDNI)
+   - [ ] Sprite'y budynków (obecnie ColorRect placeholdery)
+   - [ ] Sprite'y postaci (więźniowie, personel)
+   - [ ] Animacje chodzenia
+
+3. **Faza 13 - Audio** (priorytet NISKI dla MVP)
+   - [ ] Muzyka tła
+   - [ ] Efekty dźwiękowe UI
+   - [ ] Dźwięki wydarzeń (bójki, alarmy)
+
+4. **Faza 14 - Polish** (priorytet WYSOKI)
+   - [ ] Balansowanie ekonomii
+   - [ ] Balansowanie potrzeb więźniów
+   - [ ] Bug fixing
+   - [ ] Performance optimization dla 100+ więźniów
 
 ### Post-MVP (Nice-to-have, można dodać w updateach)
 - ⏳ Bunty i epidemia (zaawansowane kryzysy)
