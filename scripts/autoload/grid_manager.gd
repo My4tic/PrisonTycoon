@@ -87,65 +87,36 @@ func initialize(map: TileMap) -> void:
 		push_error("GridManager: TileMap is null!")
 		return
 
-	# Utwórz TileSet jeśli nie ma
-	if tilemap.tile_set == null:
-		_create_placeholder_tileset()
-	else:
-		_tileset = tilemap.tile_set
-
-	# Upewnij się że mamy wystarczająco warstw
-	_ensure_layers()
-
-	_setup_initial_terrain()
-	_rebuild_walkable_cache()
-
-
-func _create_placeholder_tileset() -> void:
+	# Utwórz TileSet z placeholder tiles
 	_tileset = TileSet.new()
 	_tileset.tile_size = Vector2i(Constants.TILE_SIZE, Constants.TILE_SIZE)
 
-	# Utwórz źródła dla każdego typu
 	_create_tile_source(TileSource.TERRAIN, TILE_COLORS["terrain"])
 	_create_tile_source(TileSource.FLOOR, TILE_COLORS["floor"])
 	_create_tile_source(TileSource.WALLS, TILE_COLORS["walls"])
 
 	tilemap.tile_set = _tileset
-	print("GridManager: Created placeholder TileSet")
+
+	# Upewnij się że mamy wystarczająco warstw
+	_ensure_layers()
 
 
 func _create_tile_source(source_id: int, colors: Array) -> void:
 	var tile_count: int = colors.size()
-	var atlas_width: int = tile_count * Constants.TILE_SIZE
-	var atlas_height: int = Constants.TILE_SIZE
+	var tile_size: int = Constants.TILE_SIZE
+	var atlas_width: int = tile_count * tile_size
+	var atlas_height: int = tile_size
 
-	# Utwórz obraz atlasu
+	# Utwórz obraz atlasu - użyj fill_rect zamiast set_pixel (szybsze)
 	var atlas_image: Image = Image.create(atlas_width, atlas_height, false, Image.FORMAT_RGBA8)
 
 	for i in range(tile_count):
 		var color: Color = colors[i]
-		var start_x: int = i * Constants.TILE_SIZE
+		var start_x: int = i * tile_size
+		var rect: Rect2i = Rect2i(start_x, 0, tile_size, tile_size)
 
-		# Wypełnij tile kolorem z delikatnym gradientem dla głębi
-		for x in range(Constants.TILE_SIZE):
-			for y in range(Constants.TILE_SIZE):
-				var px: int = start_x + x
-				# Dodaj subtelną teksturę
-				var noise_value: float = 0.95 + randf() * 0.1
-				var edge_darken: float = 1.0
-
-				# Ciemniejsze krawędzie dla efektu 3D
-				if x < 2 or y < 2:
-					edge_darken = 1.1  # Jaśniejsza krawędź (światło)
-				elif x >= Constants.TILE_SIZE - 2 or y >= Constants.TILE_SIZE - 2:
-					edge_darken = 0.85  # Ciemniejsza krawędź (cień)
-
-				var final_color: Color = Color(
-					clampf(color.r * noise_value * edge_darken, 0.0, 1.0),
-					clampf(color.g * noise_value * edge_darken, 0.0, 1.0),
-					clampf(color.b * noise_value * edge_darken, 0.0, 1.0),
-					1.0
-				)
-				atlas_image.set_pixel(px, y, final_color)
+		# Wypełnij cały tile kolorem
+		atlas_image.fill_rect(rect, color)
 
 	# Utwórz teksturę z obrazu
 	var atlas_texture: ImageTexture = ImageTexture.create_from_image(atlas_image)
@@ -153,7 +124,7 @@ func _create_tile_source(source_id: int, colors: Array) -> void:
 	# Utwórz źródło atlasu
 	var source: TileSetAtlasSource = TileSetAtlasSource.new()
 	source.texture = atlas_texture
-	source.texture_region_size = Vector2i(Constants.TILE_SIZE, Constants.TILE_SIZE)
+	source.texture_region_size = Vector2i(tile_size, tile_size)
 
 	# Dodaj źródło do TileSet
 	_tileset.add_source(source, source_id)
@@ -184,11 +155,8 @@ func _ensure_layers() -> void:
 func _setup_initial_terrain() -> void:
 	if tilemap == null:
 		return
-
-	# Wypełnij całą mapę trawą
-	for x in range(_map_width):
-		for y in range(_map_height):
-			set_terrain(Vector2i(x, y), TERRAIN_GRASS)
+	# Teren będzie dodawany w miarę potrzeby (np. przy budowaniu)
+	# Nie wypełniamy całej mapy na starcie ze względów wydajnościowych
 
 
 # =============================================================================

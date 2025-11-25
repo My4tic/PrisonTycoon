@@ -66,10 +66,8 @@ func _ready() -> void:
 	_connect_buttons()
 	_setup_camera()
 
-	# Inicjalizuj GridManager z TileMap
+	# Inicjalizuj managery
 	GridManager.initialize(tilemap)
-
-	# Inicjalizuj NavigationManager
 	NavigationManager.initialize(navigation_region)
 
 	# Rozpocznij nową grę (tymczasowo - docelowo z menu)
