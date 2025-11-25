@@ -15,8 +15,8 @@ var is_active: bool = false
 var selected_building_type: Enums.BuildingType = Enums.BuildingType.CELL_SINGLE
 
 # Referencje
-var build_ghost: BuildGhost = null
-var build_menu: BuildMenu = null
+var build_ghost = null  # BuildGhost
+var build_menu = null  # BuildMenu
 var buildings_container: Node2D = null
 var camera: Camera2D = null
 
@@ -37,7 +37,7 @@ func _connect_signals() -> void:
 	Signals.building_placement_failed.connect(_on_building_placement_failed)
 
 
-func initialize(ghost: BuildGhost, menu: BuildMenu, container: Node2D, cam: Camera2D) -> void:
+func initialize(ghost, menu, container: Node2D, cam: Camera2D) -> void:
 	build_ghost = ghost
 	build_menu = menu
 	buildings_container = container
@@ -191,7 +191,7 @@ func _spawn_building_visual(building_id: int, building_type: Enums.BuildingType,
 	if not buildings_container or not _building_scene:
 		return
 
-	var building: Building = _building_scene.instantiate() as Building
+	var building = _building_scene.instantiate()
 	building.initialize(building_id, building_type, grid_pos, grid_size)
 	building.set_constructed(true)
 	buildings_container.add_child(building)

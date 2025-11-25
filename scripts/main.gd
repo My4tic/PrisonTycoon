@@ -7,6 +7,7 @@ extends Node2D
 # =============================================================================
 const BuildGhostScene := preload("res://scenes/buildings/build_ghost.tscn")
 const BuildMenuScene := preload("res://scenes/ui/build_menu.tscn")
+const BuildModeControllerScript := preload("res://scripts/controllers/build_mode_controller.gd")
 
 # =============================================================================
 # REFERENCJE DO WĘZŁÓW
@@ -25,9 +26,9 @@ const BuildMenuScene := preload("res://scenes/ui/build_menu.tscn")
 @onready var panels_container: Control = $UI/SafeArea/HUD/Panels
 
 # Build Mode
-var build_mode_controller: BuildModeController = null
-var build_ghost: BuildGhost = null
-var build_menu: BuildMenu = null
+var build_mode_controller = null  # BuildModeController
+var build_ghost = null  # BuildGhost
+var build_menu = null  # BuildMenu
 
 # Top Bar
 @onready var day_label: Label = $UI/SafeArea/HUD/TopBar/MarginContainer/HBoxContainer/TimeContainer/DayLabel
@@ -141,15 +142,16 @@ func _setup_camera() -> void:
 
 func _setup_build_mode() -> void:
 	# Utwórz BuildGhost
-	build_ghost = BuildGhostScene.instantiate() as BuildGhost
+	build_ghost = BuildGhostScene.instantiate()
 	world.add_child(build_ghost)
 
 	# Utwórz BuildMenu
-	build_menu = BuildMenuScene.instantiate() as BuildMenu
+	build_menu = BuildMenuScene.instantiate()
 	panels_container.add_child(build_menu)
 
 	# Utwórz kontroler
-	build_mode_controller = BuildModeController.new()
+	build_mode_controller = Node.new()
+	build_mode_controller.set_script(BuildModeControllerScript)
 	add_child(build_mode_controller)
 	build_mode_controller.initialize(build_ghost, build_menu, buildings_container, camera)
 
