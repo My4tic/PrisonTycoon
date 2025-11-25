@@ -1,0 +1,438 @@
+{
+	"CELL_SINGLE": {
+		"name": "Cela pojedyncza",
+		"name_en": "Single Cell",
+		"category": "CELLS",
+		"size": [3, 3],
+		"cost": 1500,
+		"capacity": 1,
+		"description": "Podstawowa cela dla jednego więźnia.",
+		"effects": {
+			"sleep": 100
+		},
+		"mood_modifier": 0,
+		"requirements": {},
+		"unlocked": true
+	},
+	"CELL_DOUBLE": {
+		"name": "Cela podwójna",
+		"name_en": "Double Cell",
+		"category": "CELLS",
+		"size": [4, 4],
+		"cost": 2500,
+		"capacity": 2,
+		"description": "Cela dla dwóch więźniów z lepszym wyposażeniem.",
+		"effects": {
+			"sleep": 100
+		},
+		"mood_modifier": 5,
+		"requirements": {},
+		"unlocked": true
+	},
+	"DORMITORY": {
+		"name": "Dormitorium",
+		"name_en": "Dormitory",
+		"category": "CELLS",
+		"size": [8, 8],
+		"cost": 6000,
+		"capacity": 8,
+		"description": "Duże pomieszczenie dla 8 więźniów. Tanie ale obniża nastrój.",
+		"effects": {
+			"sleep": 100
+		},
+		"mood_modifier": -10,
+		"requirements": {},
+		"unlocked": true
+	},
+	"CELL_LUXURY": {
+		"name": "Cela luksusowa",
+		"name_en": "Luxury Cell",
+		"category": "CELLS",
+		"size": [5, 5],
+		"cost": 5000,
+		"capacity": 1,
+		"description": "Komfortowa cela z TV i prywatną łazienką. Tylko dla więźniów z dobrym zachowaniem.",
+		"effects": {
+			"sleep": 100,
+			"entertainment": 20
+		},
+		"mood_modifier": 20,
+		"requirements": {
+			"reputation": 3
+		},
+		"unlocked": false
+	},
+	"SOLITARY": {
+		"name": "Izolatka",
+		"name_en": "Solitary Confinement",
+		"category": "CELLS",
+		"size": [3, 3],
+		"cost": 2000,
+		"capacity": 1,
+		"description": "Cela izolacyjna dla niebezpiecznych więźniów. Maksymalnie 7 dni.",
+		"effects": {
+			"sleep": 80
+		},
+		"mood_modifier": -50,
+		"requirements": {},
+		"wall_type": "STEEL",
+		"unlocked": true
+	},
+	"KITCHEN": {
+		"name": "Kuchnia",
+		"name_en": "Kitchen",
+		"category": "FOOD",
+		"size": [6, 6],
+		"cost": 3000,
+		"capacity": 0,
+		"description": "Produkuje posiłki dla więźniów. Wymaga kucharzy.",
+		"effects": {},
+		"production": {
+			"meals_per_hour": 50
+		},
+		"requirements": {
+			"staff": ["COOK"]
+		},
+		"staff_slots": 4,
+		"prisoner_work_slots": 3,
+		"unlocked": true
+	},
+	"CANTEEN": {
+		"name": "Kantyna",
+		"name_en": "Canteen",
+		"category": "FOOD",
+		"size": [10, 10],
+		"cost": 5000,
+		"capacity": 40,
+		"description": "Jadalnia dla więźniów. Wymaga kuchni.",
+		"effects": {
+			"hunger": 30
+		},
+		"mood_modifier": 0,
+		"requirements": {
+			"building": ["KITCHEN"]
+		},
+		"unlocked": true
+	},
+	"YARD": {
+		"name": "Podwórko",
+		"name_en": "Yard",
+		"category": "RECREATION",
+		"size": [10, 10],
+		"cost": 2000,
+		"capacity": 30,
+		"description": "Zewnętrzna przestrzeń na spacery i sport.",
+		"effects": {
+			"freedom": 15,
+			"entertainment": 10
+		},
+		"mood_modifier": 10,
+		"requirements": {},
+		"outdoor": true,
+		"unlocked": true
+	},
+	"GYM": {
+		"name": "Siłownia",
+		"name_en": "Gym",
+		"category": "RECREATION",
+		"size": [6, 6],
+		"cost": 4000,
+		"capacity": 12,
+		"description": "Sala do ćwiczeń fizycznych. Zmniejsza agresję.",
+		"effects": {
+			"entertainment": 15
+		},
+		"mood_modifier": 10,
+		"aggression_modifier": -20,
+		"requirements": {},
+		"unlocked": true
+	},
+	"LIBRARY": {
+		"name": "Biblioteka",
+		"name_en": "Library",
+		"category": "RECREATION",
+		"size": [5, 5],
+		"cost": 3000,
+		"capacity": 10,
+		"description": "Miejsce do czytania i nauki. Zmniejsza recydywę.",
+		"effects": {
+			"entertainment": 15
+		},
+		"mood_modifier": 15,
+		"recidivism_modifier": -10,
+		"requirements": {},
+		"unlocked": true
+	},
+	"CHAPEL": {
+		"name": "Kaplica",
+		"name_en": "Chapel",
+		"category": "RECREATION",
+		"size": [6, 8],
+		"cost": 3500,
+		"capacity": 20,
+		"description": "Miejsce nabożeństw i wsparcia duchowego.",
+		"effects": {
+			"entertainment": 10
+		},
+		"mood_modifier": 15,
+		"aggression_modifier": -5,
+		"requirements": {
+			"staff": ["PRIEST"]
+		},
+		"unlocked": false
+	},
+	"TV_ROOM": {
+		"name": "Sala TV",
+		"name_en": "TV Room",
+		"category": "RECREATION",
+		"size": [6, 6],
+		"cost": 2500,
+		"capacity": 15,
+		"description": "Sala z telewizorem do wspólnego oglądania.",
+		"effects": {
+			"entertainment": 20
+		},
+		"mood_modifier": 10,
+		"requirements": {},
+		"unlocked": true
+	},
+	"LAUNDRY": {
+		"name": "Pralnia",
+		"name_en": "Laundry",
+		"category": "WORK",
+		"size": [6, 6],
+		"cost": 5000,
+		"capacity": 0,
+		"description": "Pranie dla więzienia. Niskoryzykowna praca.",
+		"effects": {
+			"entertainment": 5
+		},
+		"mood_modifier": -5,
+		"revenue_per_day": 200,
+		"prisoner_work_slots": 4,
+		"requirements": {},
+		"security_risk": "LOW",
+		"unlocked": true
+	},
+	"WORKSHOP_CARPENTRY": {
+		"name": "Warsztat stolarski",
+		"name_en": "Carpentry Workshop",
+		"category": "WORK",
+		"size": [8, 8],
+		"cost": 8000,
+		"capacity": 0,
+		"description": "Produkcja mebli. Wysokoryzykowna praca (narzędzia).",
+		"effects": {
+			"entertainment": 10
+		},
+		"mood_modifier": 0,
+		"revenue_per_day": 500,
+		"prisoner_work_slots": 6,
+		"requirements": {
+			"staff": ["GUARD", "GUARD"]
+		},
+		"security_risk": "HIGH",
+		"unlocked": true
+	},
+	"GARDEN": {
+		"name": "Ogród",
+		"name_en": "Garden",
+		"category": "WORK",
+		"size": [10, 10],
+		"cost": 3000,
+		"capacity": 0,
+		"description": "Uprawa warzyw. Praca na świeżym powietrzu.",
+		"effects": {
+			"entertainment": 10,
+			"freedom": 5
+		},
+		"mood_modifier": 5,
+		"revenue_per_day": 300,
+		"prisoner_work_slots": 4,
+		"requirements": {
+			"staff": ["GUARD"]
+		},
+		"outdoor": true,
+		"security_risk": "MEDIUM",
+		"unlocked": false
+	},
+	"CALL_CENTER": {
+		"name": "Call center",
+		"name_en": "Call Center",
+		"category": "WORK",
+		"size": [8, 6],
+		"cost": 10000,
+		"capacity": 0,
+		"description": "Praca biurowa. Tylko więźniowie niskiego zagrożenia.",
+		"effects": {
+			"entertainment": 15
+		},
+		"mood_modifier": 5,
+		"revenue_per_day": 800,
+		"prisoner_work_slots": 8,
+		"requirements": {
+			"staff": ["GUARD"],
+			"prisoner_category": "LOW"
+		},
+		"security_risk": "LOW",
+		"unlocked": false
+	},
+	"INFIRMARY": {
+		"name": "Ambulatorium",
+		"name_en": "Infirmary",
+		"category": "INFRASTRUCTURE",
+		"size": [5, 5],
+		"cost": 4000,
+		"capacity": 3,
+		"description": "Leczenie chorych i rannych więźniów.",
+		"effects": {
+			"health": 100
+		},
+		"requirements": {
+			"staff": ["MEDIC"]
+		},
+		"unlocked": true
+	},
+	"GUARD_ROOM": {
+		"name": "Posterunek strażników",
+		"name_en": "Guard Room",
+		"category": "INFRASTRUCTURE",
+		"size": [4, 4],
+		"cost": 2500,
+		"capacity": 4,
+		"description": "Odpoczynek i koordynacja strażników. +20% efektywność w pobliżu.",
+		"effects": {},
+		"staff_effectiveness_bonus": 20,
+		"staff_slots": 4,
+		"requirements": {},
+		"unlocked": true
+	},
+	"RECEPTION": {
+		"name": "Recepcja",
+		"name_en": "Reception",
+		"category": "INFRASTRUCTURE",
+		"size": [6, 4],
+		"cost": 3000,
+		"capacity": 0,
+		"description": "Przyjmowanie nowych więźniów i wizyty rodzin.",
+		"effects": {},
+		"requirements": {},
+		"must_be_at_entrance": true,
+		"unlocked": true
+	},
+	"STORAGE": {
+		"name": "Magazyn",
+		"name_en": "Storage",
+		"category": "INFRASTRUCTURE",
+		"size": [6, 6],
+		"cost": 1500,
+		"capacity": 0,
+		"description": "Przechowywanie materiałów i jedzenia.",
+		"effects": {},
+		"storage_capacity": 100,
+		"requirements": {},
+		"unlocked": true
+	},
+	"GENERATOR": {
+		"name": "Generator",
+		"name_en": "Generator",
+		"category": "INFRASTRUCTURE",
+		"size": [4, 4],
+		"cost": 5000,
+		"capacity": 0,
+		"description": "Zapasowe źródło energii na wypadek awarii.",
+		"effects": {},
+		"daily_fuel_cost": 100,
+		"requirements": {},
+		"unlocked": false
+	},
+	"SHOWER_ROOM": {
+		"name": "Prysznice",
+		"name_en": "Shower Room",
+		"category": "INFRASTRUCTURE",
+		"size": [5, 5],
+		"cost": 2000,
+		"capacity": 8,
+		"description": "Wspólne prysznice dla więźniów.",
+		"effects": {
+			"hygiene": 50
+		},
+		"requirements": {},
+		"unlocked": true
+	},
+	"CAMERA": {
+		"name": "Kamera CCTV",
+		"name_en": "CCTV Camera",
+		"category": "SECURITY",
+		"size": [1, 1],
+		"cost": 500,
+		"capacity": 0,
+		"description": "Monitoring obszaru 5x5. Wymaga centrum monitoringu.",
+		"effects": {},
+		"detection_range": 5,
+		"detection_chance": 40,
+		"fight_risk_reduction": 20,
+		"requirements": {},
+		"unlocked": true
+	},
+	"METAL_DETECTOR": {
+		"name": "Detektor metalu",
+		"name_en": "Metal Detector",
+		"category": "SECURITY",
+		"size": [1, 2],
+		"cost": 1000,
+		"capacity": 0,
+		"description": "Wykrywa broń i narzędzia na przejściach. 80% skuteczność.",
+		"effects": {},
+		"detection_chance": 80,
+		"requirements": {},
+		"place_on_door": true,
+		"unlocked": true
+	},
+	"ALARM": {
+		"name": "Alarm",
+		"name_en": "Alarm",
+		"category": "SECURITY",
+		"size": [1, 1],
+		"cost": 800,
+		"capacity": 0,
+		"description": "Powiadamia strażników o zagrożeniu w sektorze.",
+		"effects": {},
+		"alert_range": 20,
+		"requirements": {},
+		"unlocked": true
+	},
+	"GUARD_TOWER": {
+		"name": "Wieża strażnicza",
+		"name_en": "Guard Tower",
+		"category": "SECURITY",
+		"size": [3, 3],
+		"cost": 3000,
+		"capacity": 0,
+		"description": "Snajper zapobiega ucieczkom. 95% skuteczność w zasięgu 20.",
+		"effects": {},
+		"detection_range": 20,
+		"escape_prevention_chance": 95,
+		"requirements": {
+			"staff": ["SNIPER"]
+		},
+		"outdoor": true,
+		"unlocked": false
+	},
+	"CHECKPOINT": {
+		"name": "Punkt kontrolny",
+		"name_en": "Checkpoint",
+		"category": "SECURITY",
+		"size": [3, 2],
+		"cost": 2000,
+		"capacity": 0,
+		"description": "Bramka z wbudowanym detektorem metalu i stanowiskiem strażnika.",
+		"effects": {},
+		"detection_chance": 85,
+		"requirements": {
+			"staff": ["GUARD"]
+		},
+		"place_on_door": true,
+		"unlocked": false
+	}
+}

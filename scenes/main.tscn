@@ -1,0 +1,147 @@
+[gd_scene load_steps=2 format=3 uid="uid://bxqw8yk5h2xj3"]
+
+[ext_resource type="Script" path="res://scripts/main.gd" id="1_main"]
+
+[node name="Main" type="Node2D"]
+script = ExtResource("1_main")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(960, 540)
+zoom = Vector2(1, 1)
+position_smoothing_enabled = true
+position_smoothing_speed = 10.0
+
+[node name="World" type="Node2D" parent="."]
+
+[node name="TileMap" type="TileMap" parent="World"]
+
+[node name="Buildings" type="Node2D" parent="World"]
+
+[node name="Entities" type="Node2D" parent="World"]
+
+[node name="Prisoners" type="Node2D" parent="World/Entities"]
+
+[node name="Staff" type="Node2D" parent="World/Entities"]
+
+[node name="NavigationRegion2D" type="NavigationRegion2D" parent="World"]
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="HUD" type="Control" parent="UI"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TopBar" type="Panel" parent="UI/HUD"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 60.0
+grow_horizontal = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="UI/HUD/TopBar"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 20
+
+[node name="GameTitle" type="Label" parent="UI/HUD/TopBar/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 2
+text = "Prison Tycoon"
+
+[node name="DayLabel" type="Label" parent="UI/HUD/TopBar/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 2
+text = "Dzień 1 - 06:00"
+
+[node name="SpeedControls" type="HBoxContainer" parent="UI/HUD/TopBar/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 2
+
+[node name="PauseButton" type="Button" parent="UI/HUD/TopBar/HBoxContainer/SpeedControls"]
+layout_mode = 2
+text = "||"
+
+[node name="Speed1Button" type="Button" parent="UI/HUD/TopBar/HBoxContainer/SpeedControls"]
+layout_mode = 2
+text = "x1"
+
+[node name="Speed2Button" type="Button" parent="UI/HUD/TopBar/HBoxContainer/SpeedControls"]
+layout_mode = 2
+text = "x2"
+
+[node name="Speed4Button" type="Button" parent="UI/HUD/TopBar/HBoxContainer/SpeedControls"]
+layout_mode = 2
+text = "x4"
+
+[node name="CapitalLabel" type="Label" parent="UI/HUD/TopBar/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 2
+text = "$30,000"
+
+[node name="PrisonerCount" type="Label" parent="UI/HUD/TopBar/HBoxContainer"]
+layout_mode = 2
+text = "0/0"
+
+[node name="SettingsButton" type="Button" parent="UI/HUD/TopBar/HBoxContainer"]
+layout_mode = 2
+text = "⚙"
+
+[node name="BottomMenu" type="Panel" parent="UI/HUD"]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -80.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="UI/HUD/BottomMenu"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+theme_override_constants/separation = 30
+
+[node name="BuildButton" type="Button" parent="UI/HUD/BottomMenu/HBoxContainer"]
+layout_mode = 2
+text = "Buduj"
+
+[node name="PrisonersButton" type="Button" parent="UI/HUD/BottomMenu/HBoxContainer"]
+layout_mode = 2
+text = "Więźniowie"
+
+[node name="ScheduleButton" type="Button" parent="UI/HUD/BottomMenu/HBoxContainer"]
+layout_mode = 2
+text = "Harmonogram"
+
+[node name="StaffButton" type="Button" parent="UI/HUD/BottomMenu/HBoxContainer"]
+layout_mode = 2
+text = "Personel"
+
+[node name="StatsButton" type="Button" parent="UI/HUD/BottomMenu/HBoxContainer"]
+layout_mode = 2
+text = "Statystyki"
+
+[node name="AlertsButton" type="Button" parent="UI/HUD/BottomMenu/HBoxContainer"]
+layout_mode = 2
+text = "Alerty"
+
+[node name="AlertBadge" type="Label" parent="UI/HUD/BottomMenu/HBoxContainer/AlertsButton"]
+layout_mode = 0
+offset_left = -5.0
+offset_top = -5.0
+offset_right = 10.0
+offset_bottom = 10.0
+text = "0"
