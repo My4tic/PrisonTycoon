@@ -183,7 +183,7 @@ func _on_detection_area_body_entered(body: Node2D) -> void:
 				respond_to_fight(prisoner.global_position, [prisoner])
 
 
-override func _handle_incident_arrival() -> void:
+func _handle_incident_arrival() -> void:
 	if responding_to_fight and prisoners_to_pacify.size() > 0:
 		# Rozpocznij pacyfikację
 		change_state(Enums.StaffState.PACIFYING)
@@ -238,7 +238,7 @@ func _complete_pacification() -> void:
 # =============================================================================
 # OBSŁUGA SYGNAŁÓW
 # =============================================================================
-override func _on_fight_started(location: Vector2i, prisoners: Array) -> void:
+func _on_fight_started(location: Vector2i, prisoners: Array) -> void:
 	if not is_on_duty:
 		return
 
@@ -251,13 +251,13 @@ override func _on_fight_started(location: Vector2i, prisoners: Array) -> void:
 		respond_to_fight(world_pos, prisoners)
 
 
-override func _start_shift() -> void:
+func _start_shift() -> void:
 	super._start_shift()
 	# Rozpocznij patrol po rozpoczęciu zmiany
 	start_patrol()
 
 
-override func _end_shift() -> void:
+func _end_shift() -> void:
 	# Anuluj bieżące zadania
 	responding_to_fight = false
 	prisoners_to_pacify.clear()
