@@ -239,3 +239,30 @@ signal long_press(position: Vector2)
 
 ## Emitowany przy podwójnym kliknięciu/tap
 signal double_tap(position: Vector2)
+
+# =============================================================================
+# KAMPANIA
+# =============================================================================
+## Emitowany gdy rozdział zostaje rozpoczęty
+signal chapter_started(chapter_id: int)
+
+## Emitowany gdy rozdział zostaje ukończony
+signal chapter_completed(chapter_id: int)
+
+## Emitowany gdy rozdział zostaje przegrany
+signal chapter_failed(chapter_id: int, reason: String)
+
+## Emitowany gdy cel zostaje ukończony
+signal objective_completed(objective_id: int)
+
+## Emitowany gdy postęp celu się zmienia
+signal objective_progress_updated(objective_id: int, current: int, target: int)
+
+## Emitowany gdy wszystkie cele zostają ukończone
+signal all_objectives_completed()
+
+## Emitowany gdy wyświetla się komunikat tutoriala
+signal tutorial_message_shown(message_id: String)
+
+## Emitowany gdy krok tutoriala zostaje ukończony
+signal tutorial_step_completed(step_id: String)

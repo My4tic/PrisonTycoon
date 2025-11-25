@@ -251,3 +251,28 @@ enum Difficulty {
 	NORMAL,
 	HARD
 }
+
+# =============================================================================
+# KAMPANIA
+# =============================================================================
+enum ObjectiveType {
+	REACH_PRISONER_COUNT,    # Osiągnij X więźniów
+	REACH_CAPITAL,           # Osiągnij X kapitału
+	BUILD_BUILDING,          # Zbuduj budynek typu X
+	BUILD_BUILDING_COUNT,    # Zbuduj X budynków typu Y
+	SURVIVE_DAYS,            # Przetrwaj X dni
+	NO_ESCAPES,              # Zero ucieczek przez X dni
+	NO_DEATHS,               # Zero śmierci przez X dni
+	PRISONER_MOOD_ABOVE,     # Średni nastrój więźniów > X%
+	HIRE_STAFF,              # Zatrudnij X personelu typu Y
+	DAILY_PROFIT,            # Dzienny zysk > X
+	REACH_REPUTATION,        # Osiągnij X gwiazdek reputacji
+	COMPLETE_TUTORIAL_STEP   # Ukończ krok tutoriala
+}
+
+enum ChapterStatus {
+	LOCKED,                  # Zablokowany
+	AVAILABLE,               # Dostępny do grania
+	IN_PROGRESS,             # W trakcie
+	COMPLETED                # Ukończony
+}

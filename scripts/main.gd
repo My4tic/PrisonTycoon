@@ -13,6 +13,8 @@ const PrisonersPanelScene := preload("res://scenes/ui/prisoners_panel.tscn")
 const SchedulePanelScene := preload("res://scenes/ui/schedule_panel.tscn")
 const StaffPanelScene := preload("res://scenes/ui/staff_panel.tscn")
 const AlertPanelScene := preload("res://scenes/ui/alert_panel.tscn")
+const ObjectivesPanelScene := preload("res://scenes/ui/objectives_panel.tscn")
+const TutorialPanelScene := preload("res://scenes/ui/tutorial_panel.tscn")
 
 # =============================================================================
 # REFERENCJE DO WĘZŁÓW
@@ -49,6 +51,10 @@ var staff_panel = null  # StaffPanel
 
 # Alert Panel
 var alert_panel = null  # AlertPanel
+
+# Campaign UI
+var objectives_panel = null  # ObjectivesPanel
+var tutorial_panel = null  # TutorialPanel
 
 # Top Bar
 @onready var day_label: Label = $UI/SafeArea/HUD/TopBar/MarginContainer/HBoxContainer/TimeContainer/DayLabel
@@ -103,6 +109,7 @@ func _ready() -> void:
 	_setup_schedule_panel()
 	_setup_staff_panel()
 	_setup_alert_panel()
+	_setup_campaign_ui()
 
 	# Inicjalizuj managery
 	GridManager.initialize(tilemap)
@@ -210,6 +217,16 @@ func _setup_staff_panel() -> void:
 func _setup_alert_panel() -> void:
 	alert_panel = AlertPanelScene.instantiate()
 	panels_container.add_child(alert_panel)
+
+
+func _setup_campaign_ui() -> void:
+	# Panel celów (widoczny podczas kampanii)
+	objectives_panel = ObjectivesPanelScene.instantiate()
+	panels_container.add_child(objectives_panel)
+
+	# Panel tutoriala
+	tutorial_panel = TutorialPanelScene.instantiate()
+	panels_container.add_child(tutorial_panel)
 
 
 func _handle_camera_input(event: InputEvent) -> void:

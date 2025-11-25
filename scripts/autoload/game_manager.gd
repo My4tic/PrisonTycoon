@@ -93,6 +93,14 @@ func set_paused(paused: bool) -> void:
 		get_tree().paused = false
 
 
+func pause_game() -> void:
+	set_paused(true)
+
+
+func unpause_game() -> void:
+	set_paused(false)
+
+
 func set_speed(index: int) -> void:
 	index = clampi(index, 0, Constants.GAME_SPEEDS.size() - 1)
 

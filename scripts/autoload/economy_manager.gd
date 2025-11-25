@@ -104,6 +104,17 @@ func get_capital() -> int:
 	return capital
 
 
+func set_capital(amount: int) -> void:
+	var old_capital := capital
+	capital = amount
+	days_in_debt = 0  # Reset przy ustawianiu nowego kapitału
+	Signals.capital_changed.emit(old_capital, capital)
+
+
+func is_bankrupt() -> bool:
+	return days_in_debt >= Constants.BANKRUPTCY_DAYS
+
+
 # =============================================================================
 # SUBWENCJE
 # =============================================================================

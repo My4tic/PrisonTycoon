@@ -36,6 +36,7 @@ StaffManager="*res://scripts/autoload/staff_manager.gd"
 FightSystem="*res://scripts/systems/fight_system.gd"
 EscapeSystem="*res://scripts/systems/escape_system.gd"
 ContrabandSystem="*res://scripts/systems/contraband_system.gd"
+CampaignManager="*res://scripts/autoload/campaign_manager.gd"
 
 [display]
 

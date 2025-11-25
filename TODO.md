@@ -696,22 +696,24 @@ Prison Tycoon to mobilna gra symulacyjna typu management sim, gdzie gracz buduje
 6. ✅ Personel (strażnicy, kucharze, medycy) - UKOŃCZONE
 7. ✅ Kryzysy podstawowe (bójki, ucieczki, alert system) - UKOŃCZONE
 8. ✅ UI (HUD, Build Menu, Prisoner Panel, Alerts - podstawowe) - UKOŃCZONE
-9. ⏳ Kampania (minimum 5 rozdziałów z tutorialem) - DO ZROBIENIA
+9. ✅ Kampania (minimum 5 rozdziałów z tutorialem) - UKOŃCZONE
 10. ⏳ Grafika i audio (podstawowe, wystarczające do grania) - CZĘŚCIOWO (placeholder sprites)
 11. ⏳ Balancing i bug fixing (gra grywalna i fun) - W TRAKCIE
 
 ### Aktualny status (Listopad 2025):
-**UKOŃCZONE FAZY: 0, 1, 2, 3, 4, 5, 6, 7**
+**UKOŃCZONE FAZY: 0, 1, 2, 3, 4, 5, 6, 7, 12.1**
 - Wszystkie core systemy działają
 - Więźniowie i strażnicy poruszają się i reagują na harmonogram
 - System kryzysów (bójki, ucieczki, kontrabanda) aktywny
 - UI podstawowe kompletne
+- System kampanii z 5 rozdziałami i tutorialem zaimplementowany
 
 **DO ZROBIENIA dla MVP:**
-1. **Faza 12.1 - Kampania** (priorytet WYSOKI)
-   - [ ] 5-10 rozdziałów z progresywną trudnością
-   - [ ] Tutorial w rozdziałach 1-3
-   - [ ] System celów i warunków zwycięstwa
+1. **Faza 12.1 - Kampania** (priorytet WYSOKI) ✅ UKOŃCZONA
+   - [x] 5 rozdziałów z progresywną trudnością (CampaignManager)
+   - [x] Tutorial w rozdziale 1 (TutorialPanel)
+   - [x] System celów i warunków zwycięstwa (ObjectivesPanel)
+   - [x] Warunki przegranej (bankructwo, za dużo ucieczek/śmierci)
 
 2. **Faza 13 - Grafika** (priorytet ŚREDNI)
    - [ ] Sprite'y budynków (obecnie ColorRect placeholdery)
