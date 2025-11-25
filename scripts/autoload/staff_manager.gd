@@ -264,7 +264,7 @@ func dispatch_guard_to_fight(fight_location: Vector2i, prisoners: Array) -> void
 		if staff.current_state == Enums.StaffState.PACIFYING:
 			continue
 
-		var distance := staff.global_position.distance_to(world_pos)
+		var distance: float = staff.global_position.distance_to(world_pos)
 		if distance < closest_distance:
 			closest_distance = distance
 			closest_guard = staff
